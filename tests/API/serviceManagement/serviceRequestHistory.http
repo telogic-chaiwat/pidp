@@ -1,0 +1,11 @@
+POST http://localhost:5000/services/v1/identityServiceHistory HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYWQ1MjFlYTJiYmM2MTRjN2EwNjZlNSIsImtpbmQiOiJhY2Nlc3NfdG9rZW4iLCJpYXQiOjE2MzY4MTk5NDgsImV4cCI6MTYzNjkwNjM0OH0.i4eqhkrTOE_rQFZDkuT2G7l58t7eHBi2QD0v-Ng4Obw
+Content-Type: application/json
+
+{  
+   "identityType":"citizen_id",
+   "identityValue":"1377777776879",
+   "start": 0,
+   "limit": 20
+
+}

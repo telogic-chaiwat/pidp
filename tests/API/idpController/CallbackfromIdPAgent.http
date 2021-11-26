@@ -1,0 +1,13 @@
+POST http://localhost:3000/idp/send_confirmed_status HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYWQ1MjFlYTJiYmM2MTRjN2EwNjZlNSIsImtpbmQiOiJhY2Nlc3NfdG9rZW4iLCJpYXQiOjE2Mjg1NzI3MjksImV4cCI6MTYyODY1OTEyOX0.PP6FcLU3zscB4h5t2ye51iYZyDwMdBDkv1s66YgN1l0
+
+{  
+    "reference_id":"123123213",
+    "resultcode" : 20000,
+    "request_id": "6a40df95c0ad40e9fe83a485c2b13b64992093761420b48bb3f576930ad89a85",
+    "ial": 2.3,
+    "aal": 2.2,
+    "status" : "test",
+    "signature" : "test1"
+}

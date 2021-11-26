@@ -1,0 +1,22 @@
+POST http://localhost:3000/services/v1/identityServiceResponse HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYWQ1MjFlYTJiYmM2MTRjN2EwNjZlNSIsImtpbmQiOiJhY2Nlc3NfdG9rZW4iLCJpYXQiOjE2MjkzODg2MTIsImV4cCI6MTYyOTQ3NTAxMn0.y0X37isXwlivkwlxtO7aBOm8YY7T4A313hI6W02wwuc
+Content-Type: application/json
+
+{
+  "identityType": "citizen_id",
+  "identityValue": "1377777776879",
+  "channelName": "AIS Shop",
+  "locationCode": "Central Rama 9",
+  "userId": "userA",
+  "requestReferenceId": "123456789",
+  "requester": "Mock 1",
+  "services": [
+    {
+      "serviceName": "900.cust_info_Dipchip_001",
+      "serviceResultCode": "20000",
+      "serviceResultMessage": "success",
+      "serviceOutputFormat": "string",
+      "serviceOutputValue": "{\"card_number\":\"1234567890123\"}"
+    }
+  ]
+}

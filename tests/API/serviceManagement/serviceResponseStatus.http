@@ -1,0 +1,21 @@
+POST http://localhost:3000/services/v1/identityServiceStatus HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYWQ1MjFlYTJiYmM2MTRjN2EwNjZlNSIsImtpbmQiOiJhY2Nlc3NfdG9rZW4iLCJpYXQiOjE2MzU4NjkxNDcsImV4cCI6MTYzNTk1NTU0N30.qsU26-yYbzV-EZnm5MsP8M03yXGI2fPkjYYpqsJSQzc
+Content-Type: application/json
+
+{  
+	"requestReferenceId" : "24cf5bc83af5192dbbc64371b3174cb2",
+   "status": "prepare_data"
+
+}
+#########
+POST http://localhost:5000/services/v1/identityServiceStatus HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYWQ1MjFlYTJiYmM2MTRjN2EwNjZlNSIsImtpbmQiOiJhY2Nlc3NfdG9rZW4iLCJpYXQiOjE2MzU4NjkxNDcsImV4cCI6MTYzNTk1NTU0N30.qsU26-yYbzV-EZnm5MsP8M03yXGI2fPkjYYpqsJSQzc
+Content-Type: application/json
+
+{  
+	"identifier": "1377777776879",
+   "requestId": "1b50uu97c0assfefmi46720d40e9fedd83a485c2b1a3b64992093761420b48bb3f576930ad89a85c95600",
+   "serviceId": "900.cust_info_Dipchip_001",
+   "status": "prepare_data_2"
+
+}

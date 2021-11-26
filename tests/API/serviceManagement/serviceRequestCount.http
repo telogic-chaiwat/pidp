@@ -1,0 +1,16 @@
+
+POST http://localhost:3000/services/v1/identityServiceCount HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYWQ1MjFlYTJiYmM2MTRjN2EwNjZlNSIsImtpbmQiOiJhY2Nlc3NfdG9rZW4iLCJpYXQiOjE2MzQ0OTIyMTUsImV4cCI6MTYzNDU3ODYxNX0.R7F8JLTH4saTLzd_35cqh1j7CqxwoxtL1m1PpL0F4UQ
+
+{  
+            "identityType": "citizen_id",
+            "identityValue": "1377777776879"
+}
+
+###
+GET http://localhost:3000/flushStat HTTP/1.1
+Content-Type: application/json
+X-Rtid: IOS-200129aWZtbSUCCESS
+X-Session-Id: Gjs4zupGo0jxZchGMAoAAA
+X-Tid: IOS-200129aWZtb96IqMEw 

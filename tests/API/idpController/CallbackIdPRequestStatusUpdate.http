@@ -1,0 +1,59 @@
+POST http://localhost:3000/idp/request_status_update HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxMmYyOWM0MjRkZGI4ODE5OTFjMGI2MCIsImtpbmQiOiJhY2Nlc3NfdG9rZW4iLCJpYXQiOjE2MzA0ODgyMTcsImV4cCI6MTYzMDU3NDYxN30.l9KqCPNNrIpVCqjBWrZ9A8t4y19ywoSuVPbsNSZnl6g
+
+{  
+  "node_id": "string",
+  "type": "request_status",
+  "request_id": "1b50uu97c0assfefmi46720d40e9fedd83a485c2b1a3b64992093761420b48bb3f576930ad89a85c95600",
+  "requester_node_id": "string",
+  "mode": 1,
+  "request_message_hash": "string",
+  "min_ial": 1.1,
+  "min_aal": 1,
+  "min_idp": 0,
+  "idp_id_list": [
+    "string"
+  ],
+  "response_list": [
+    {
+      "ial": 2.3,
+      "aal": 2.2,
+      "status": "reject",
+      "signature": "test",
+      "idp_id": "3BB7E7E4-3845-4801-9259-C81116ADB3B1",
+      "valid_ial": null,
+      "valid_signature": null
+    }
+  ],
+  "data_request_list": [
+    {
+      "service_id": "string",
+      "as_id_list": [
+        "string"
+      ],
+      "min_as": 0,
+      "request_params_hash": "string",
+      "response_list": [
+        {
+          "as_id": "string",
+          "signed": true,
+          "received_data": true,
+          "error_code": 0
+        }
+      ]
+    }
+  ],
+  "request_timeout": 0,
+  "closed": true,
+  "timed_out": true,
+  "status": "pending",
+  "block_height": "string"
+}
+
+###
+GET http://localhost:3000/flushStat HTTP/1.1
+Content-Type: application/json
+X-Rtid: IOS-200129aWZtbSUCCESS
+X-Session-Id: Gjs4zupGo0jxZchGMAoAAA
+X-Tid: IOS-200129aWZtb96IqMEw 

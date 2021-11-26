@@ -1,0 +1,27 @@
+POST http://localhost:3000/idp/response HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxMmYyOWM0MjRkZGI4ODE5OTFjMGI2MCIsImtpbmQiOiJhY2Nlc3NfdG9rZW4iLCJpYXQiOjE2MzEyODY4NTQsImV4cCI6MTYzMTM3MzI1NH0.3SrpY8ZETBkr1I2vKexTGs75GzVKZZ_6mUZaaccowxk
+
+{  
+  "node_id": " 894CFA85-2AC5-4758-A86B-3E12B88F17DF ",
+  "type": "response_result",
+  "reference_id": "223213232132",
+  "request_id": "6140df95c0ad40e9fe83a485c2b13b64992093761420b48bb3f576930ad89a85",
+  "success": "test",
+  "error": {
+    "code": 0,
+    "message": "sda"
+  }
+}
+##############
+POST http://localhost:3000/idp/response HTTP/1.1
+Content-Type: application/json
+
+{
+  "node_id":"testid123",
+  "type":"response_result",
+  "reference_id":"4068691f54efe4256093702416dad0ef",
+  "request_id":"6a40df95c0ad40e9fe83a485c2b13b64992093761420b48bb3f576930ad89a85",
+  "success":true,
+  "error":{"code":0,"message":"success"}
+}

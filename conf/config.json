@@ -1,0 +1,91 @@
+{
+    "routing": {
+        "authorization": [{
+            "ctrl_name": "getToken",
+            "method": ["post"],
+            "url": ["/authorization/v1/getToken"]
+        }, {
+            "ctrl_name": "refreshToken",
+            "method": ["post"],
+            "url": ["/authorization/v1/refreshToken"]
+        }],
+        "idpController" : [
+            {
+                "ctrl_name": "callbackRequest",
+                "method": ["post"],
+                "url": ["/idp/request"]
+            },
+            {
+                "ctrl_name": "callbackRequestStatusUpdate",
+                "method": ["post"],
+                "url": ["/idp/request_status_update"]
+            },
+            {
+                "ctrl_name": "callbackResponse",
+                "method": ["post"],
+                "url": ["/idp/response"]
+            },
+            {
+                "ctrl_name": "callbackIdentityNotification",
+                "method": ["post"],
+                "url": ["/idp/identity/notification"]
+            },
+            {
+                "ctrl_name": "callbackError",
+                "method": ["post"],
+                "url": ["/idp/error"]
+            },
+            {
+                "ctrl_name": "callbackFromAgent",
+                "method": ["post"],
+                "url": ["/idp/send_confirmed_status"]
+            },
+            {
+                "ctrl_name": "CallbackIDPResponseNoDipChip",
+                "method": ["post"],
+                "url": ["/idp/responseNoDipChip"]
+            },
+            {
+                "ctrl_name": "CallbackIDPResponseReject",
+                "method": ["post"],
+                "url": ["/idp/responseReject"]
+            }
+        ],
+        "serviceManagement": [
+            {
+                "ctrl_name": "serviceRequest",
+                "method": ["post"],
+                "url": ["/services/v1/identityServiceRequest"]
+            },
+            {
+                "ctrl_name": "serviceResponse",
+                "method": ["post"],
+                "url": ["/services/v1/identityServiceResponse"]
+            },
+            {
+                "ctrl_name": "serviceRequestCount",
+                "method": ["post"],
+                "url": ["/services/v1/identityServiceCount"]
+            },
+            {
+                "ctrl_name": "serviceRequestReject",
+                "method": ["post"],
+                "url": ["/services/v1/identityServiceReject"]
+            },
+            {
+                "ctrl_name": "serviceStatus",
+                "method": ["post"],
+                "url": ["/services/v1/identityServiceStatus"]
+            },
+            {
+                "ctrl_name": "serviceRequestHistory",
+                "method": ["post"],
+                "url": ["/services/v1/identityServiceHistory"]
+            }
+        ]
+    },
+
+    "jwtSecretKey" : "k9OT6RO230Fu6qY6lpdipU0DO6awIex9",
+    "sms_content" : "Register successfully",
+    "notification_content" : "Register successfully"
+}

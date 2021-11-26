@@ -1,0 +1,18 @@
+POST http://localhost:3000/idp/identity/notification HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYWQ1MjFlYTJiYmM2MTRjN2EwNjZlNSIsImtpbmQiOiJhY2Nlc3NfdG9rZW4iLCJpYXQiOjE2Mjg1NzI3MjksImV4cCI6MTYyODY1OTEyOX0.PP6FcLU3zscB4h5t2ye51iYZyDwMdBDkv1s66YgN1l0
+
+{  
+    "node_id": "3BB7E7E4-3845-4801-9259-C81116ADB3B1",
+    "type": "identity_modification_notification",
+    "reference_group_code": "test",
+    "action": "create_identity",
+    "actor_node_id": "W Bank your consent to send your information to Krung Thai Bank (REF: 61197)?"
+}
+
+###
+GET http://localhost:3000/flushStat HTTP/1.1
+Content-Type: application/json
+X-Rtid: IOS-200129aWZtbSUCCESS
+X-Session-Id: Gjs4zupGo0jxZchGMAoAAA
+X-Tid: IOS-200129aWZtb96IqMEw 

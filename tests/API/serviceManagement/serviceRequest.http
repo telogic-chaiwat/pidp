@@ -1,0 +1,8 @@
+POST http://localhost:3000/services/v1/identityServiceRequest HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxMmYyOWM0MjRkZGI4ODE5OTFjMGI2MCIsImtpbmQiOiJhY2Nlc3NfdG9rZW4iLCJpYXQiOjE2MzA1ODkzODMsImV4cCI6MTYzMDY3NTc4M30.yGdpe36-fYzzHbHwRiTu9VYC-svVeCP3cwtJi3l8pP4
+Content-Type: application/json
+
+{  
+   "identityType":"citizen_id",
+   "identityValue":"1377777776879"
+}

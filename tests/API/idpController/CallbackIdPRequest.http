@@ -1,0 +1,38 @@
+POST http://localhost:3000/idp/request HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYWQ1MjFlYTJiYmM2MTRjN2EwNjZlNSIsImtpbmQiOiJhY2Nlc3NfdG9rZW4iLCJpYXQiOjE2Mjg0MzI0MDMsImV4cCI6MTYyODUxODgwM30.D43FVm1tAlHwmhdKP-Df3dZS3EipiG0-V1dv-gqSYXk
+
+{
+         "node_id": "5GC7E7E4-3845-4801-9259-C81116ADB3B2",
+            "type": "incoming_request",
+            "mode": 1,
+            "request_id": "1b50uu97c0assfefmi46720d40e9fedd83a485c2b1a3b64992093761420b48bb3f576930ad89a85c95600",
+            "request_message": "Would you like to give Siam Comercial Bank your consent to send your information to Krung Thai Bank (REF: 61197)?",
+            "request_message_hash": "jH2WcsD9gdF+1++tMCcY5uNAtWAlUv4GjCeIx3iEIUY=",
+            "request_message_salt": "NL9eeesTLs/roA8GUXzVGA==",
+            "requester_node_id": "27DB668C-155C-4D90-843D-ADAE12D779CE1",
+            "min_ial": 2.3,
+            "min_aal": 2.2,
+            "data_request_list": [
+                {
+                    "service_id": "900.cust_info_Dipchip_001",
+                    "as_id_list": [
+                        "894CFA85-2AC5-4758-A86B-3E12B88F17DF"
+                    ],
+                    "min_as": 1
+                }
+            ],
+            "initial_salt": "0VUapcsKVMw2A5LKp2Ntbw==",
+            "creation_time": 1594111476969,
+            "creation_block_height": "A02:179791",
+            "request_timeout": 600,
+            "namespace": "citizen_id",
+            "identifier": "1377777776879"
+}
+
+###
+GET http://localhost:3000/flushStat HTTP/1.1
+Content-Type: application/json
+X-Rtid: IOS-200129aWZtbSUCCESS
+X-Session-Id: Gjs4zupGo0jxZchGMAoAAA
+X-Tid: IOS-200129aWZtb96IqMEw 
