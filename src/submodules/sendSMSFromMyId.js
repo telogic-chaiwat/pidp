@@ -8,8 +8,11 @@ async function sendSMS(msisdn) {
   //
   const service = 'myIDS';
   const nodeName = 'sms';
+  const appName = this.appName;
   const tokens = this.utils().services('tokenFunction').
       modules('tokens');
+  const sendGetToken = this.utils().services('tokenFunction').
+      modules('sendGetToken');
   const generateRandomString = this.utils().services('basicFunction')
       .modules('generateRandomString');
   const createHttpsAgent = this.utils().submodules('createHttpsAgent')
@@ -18,11 +21,23 @@ async function sendSMS(msisdn) {
   const smsContent = this.utils().app().const('sms_content');
 
 
+  let accessToken = {
+    tokenType: 'Bearer',
+    accessToken: '',
+  };
+
+  if (tokens[service] && tokens[service].accessToken) {
+    accessToken = tokens[service];
+  } else {
+    this.debug('cannot find access token to ' + service);
+  }
+
   const headers = {
     'content-type': 'application/json',
-    'authorization': tokens[service].tokenType + ' ' + tokens[service].accessToken || '',
+    'authorization': accessToken.tokenType + ' ' + accessToken.accessToken,
     'x-method': 'POST',
   };
+
   const body = {
     'state': await generateRandomString(),
     'msisdn': msisdn,
@@ -40,11 +55,22 @@ async function sendSMS(msisdn) {
   Object.assign(optionAttribut,
       {httpsAgent: createHttpsAgent(service, nodeName)});
 
-  const response = await this.utils().http().request(optionAttribut);
+  let response = await this.utils().http().request(optionAttribut);
 
   if ((this.utils().http().isError(response)) || (typeof response == 'undefined')) {
     return;
   }
+
+  if ( (typeof response != 'string') &&
+  response.status && response.status == 401) {
+    this.stat(appName+' recv '+service+' '+
+              nodeName+' error system');
+    this.summary().addErrorBlock(service, nodeName,
+        response.status, 'unauthorized');
+    response = await sendGetToken(service, response,
+        optionAttribut);
+  }
+
   if (response.status && response.status != 200) {
     const errorDesc = (response.status==404)?'data not found':
       (response.status==403 || response.status==401)?'unauthorized':

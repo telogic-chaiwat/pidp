@@ -46,7 +46,7 @@ module.exports.checkDipChip = async function() {
   Object.assign(optionAttribut,
       {httpsAgent: createHttpsAgent(service, node)});
 
-  const response = await this.utils().http().request(optionAttribut);
+  let response = await this.utils().http().request(optionAttribut);
 
   if (this.utils().http().isError(response)) {
     // await returnError(status.SYSTEM_ERROR);
@@ -58,7 +58,7 @@ module.exports.checkDipChip = async function() {
             node+' error system');
     this.summary().addErrorBlock(service, node,
         response.status, 'unauthorized');
-    await sendGetToken(service, response,
+    response = await sendGetToken(service, response,
         optionAttribut);
   }
 

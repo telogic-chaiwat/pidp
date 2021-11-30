@@ -277,7 +277,7 @@ module.exports.NAME = async function(req, res, next) {
         resp = buildResponse(status.DATA_NOT_FOUND);
         res.status(resp.status).send(resp.body);
       } else {
-        statusEnroll = 'enroll_update_sucess';
+        statusEnroll = 'enroll_update_success';
       }
     } else {
       statusEnroll = 'enroll_update_fail';
@@ -361,7 +361,7 @@ module.exports.NAME = async function(req, res, next) {
     'Authorization': 'Bearer ' + accToken,
   };
   const configNDID = JSON.parse(process.env.server);
-  const url = (configNDID.use_https?'https':'http') +
+  let url = (configNDID.use_https?'https':'http') +
         '://' + configNDID.app_host +
         (configNDID.app_port ? (':' + configNDID.app_port) : '') +
         '/idp/response';
@@ -372,6 +372,14 @@ module.exports.NAME = async function(req, res, next) {
     // send to response
     const cmdToNdid = 'idp_send_response_to_ndid';
     const serviceToNdid = 'ndid';
+
+    const configIdpResponse = this.utils().services(serviceToNdid)
+        .conf(cmdToNdid);
+
+    if (configIdpResponse && configIdpResponse.callback_url) {
+      url = configIdpResponse.callback_url['serviceResponseModule']?
+                configIdpResponse.callback_url['serviceResponseModule']:url;
+    }
     const bodydataToIdp = {
       'reference_id': confStatusSrvOpt.bodydata.reference_id,
       'request_id': confStatusSrvOpt.bodydata.request_id,

@@ -138,15 +138,26 @@ async function sendGetToken(service, result = null,
     'content-type': 'application/json',
   };
 
+  try {
+    const username = confGetToken?confGetToken.name:'';
+    const pass = confGetToken?confGetToken.pass:'';
+    const auth = 'Basic ' + Buffer.from(`${username}:${pass}`).toString('base64');
+    Object.assign(headers, {
+      authorization: auth,
+    });
+  } catch (err) {
+    this.debug('error whle encode pass and user');
+  }
+
   const configGetToken = {
     method: 'POST',
     headers: headers,
     _service: service,
     _command: nodeName,
-    auth: {
-      username: confGetToken?confGetToken.name:'',
-      password: confGetToken?confGetToken.pass:'',
-    },
+    // auth: {
+    //   username: confGetToken?confGetToken.name:'',
+    //   password: confGetToken?confGetToken.pass:'',
+    // },
   };
   Object.assign(configGetToken,
       {httpsAgent: createHttpsAgent(service, nodeName)});
@@ -179,7 +190,13 @@ async function sendGetToken(service, result = null,
       return result;
     }
     if (optionAttribut != null) {
-      optionAttribut.headers.Authorization = tokens[service].tokenType + ' ' + tokens[service].accessToken;
+      const newToken = tokens[service].tokenType + ' ' + tokens[service].accessToken;
+      if (optionAttribut.headers['Authorization']) {
+        optionAttribut.headers['Authorization'] = newToken;
+      } else {
+        optionAttribut.headers['authorization'] = newToken;
+      }
+      // optionAttribut.headers.authorization = tokens[service].tokenType + ' ' + tokens[service].accessToken;
       result = await this.utils().http().request(optionAttribut);
     }
     return result;
