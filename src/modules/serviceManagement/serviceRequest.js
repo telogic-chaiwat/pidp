@@ -123,7 +123,7 @@ module.exports.NAME = async function(req, res, next) {
   mongoResponse = timeoutFilter(mongoResponse);
   if (Array.isArray(mongoResponse) && mongoResponse.length == 0) {
     this.stat(appName+' returned '+nodeCmd+' '+'error');
-    const resp = buildResponse(status.DATA_NOT_FOUND);
+    const resp = buildResponse(status.DATA_NOT_FOUND_200);
     res.status(resp.status).send(resp.body);
     return;
   }
