@@ -35,8 +35,6 @@ module.exports.NAME = async function(req, res, next) {
       .modules('getDipChipFlag');
   const sendErrorResponse = this.utils().submodules('errorResponse')
       .modules('sendErrorResponse');
-  const sendsms = this.utils().submodules('sendSMSFromMyId')
-      .modules('send');
 
   // init detail and summary log
   const appName = this.appName || 'pidp';
@@ -60,19 +58,6 @@ module.exports.NAME = async function(req, res, next) {
     this.detail().end();
     this.summary().endASync();
     return;
-  };
-
-  const sendErrorCallback = async ()=>{
-    const dataIdpErrorResponse = {
-      'reference_id': '',
-      'request_id': req.body.request_id,
-      'node_id': req.body.node_id,
-      'error_code': 30300,
-      'urlCustom': 'callbackRequestModule',
-      'callbackHandleURL': 'callbackRequestModule',
-    };
-
-    await sendErrorResponse(dataIdpErrorResponse);
   };
 
   let responseError = await validateHeader(appName, nodeCmd, headersReqSchema,
@@ -310,65 +295,36 @@ module.exports.NAME = async function(req, res, next) {
   }
 
   // new requierment to check enroll and Dipchip (myid) 18-10-2021
-  // new CR use reference_group_code if identifier is not available
-  const paramForEnroll = {};
-  let callbackEnroll = async (msisdn)=>{
-    await sendsms(msisdn);
-  };
-
-  if (this.req.body.identifier) {
-    Object.assign(paramForEnroll, {
-      'id_card': this.req.body.identifier,
-    });
-  } else {
-    Object.assign(paramForEnroll, {
-      'reference_group_code': this.req.body.reference_group_code,
-    });
-    callbackEnroll = async (msisdn, idCard)=>{
-      const optionMongo = {
-        collection: collectionName.IDENTITY_REQUEST,
-        commandName: 'update_identity_request',
-        invoke: initInvoke,
-        selector: {'request_id': req.body.request_id},
-        update: {
-          $set: {
-            'name_space': 'citizen_id',
-            'identifier': idCard,
-          },
-        },
-        max_retry: confMongo.max_retry,
-        timeout: (confMongo.timeout*1000),
-        retry_condition: 'CONNECTION_ERROR|TIMEOUT',
-      };
-      const mongoUpdateRes = await mongoUpdate(this, optionMongo);
-      if (mongoUpdateRes && mongoUpdateRes == 'error') {
-        await sendErrorCallback.call(this);
-        return;
-      }
-      // data not found
-      if (mongoUpdateRes.n && mongoUpdateRes.n == 0) {
-        await sendErrorCallback.call(this);
-        return;
-      }
-
-      await sendsms(msisdn);
-    };
-  }
-  const resEnroll = await enrollchecking(callbackEnroll, paramForEnroll);
-
+  const resEnroll = await enrollchecking();
   if (typeof resEnroll != 'string' && resEnroll.data &&
         resEnroll.data.resultCode == '20020' && resEnroll.status == 200) {
-    // if identifer is available
-    if (this.req.body.identifier) {
-      const respDipChip = await checkDipChip();
-      if ((typeof respDipChip != 'string' && respDipChip.status &&
-                respDipChip.status == 404) ||
-                getDipChipFlag(respDipChip) == 'N'
-      ) {
-        await sendErrorCallback.call(this);
-      }
-    } else {
-      await sendErrorCallback.call(this);
+    const respDipChip = await checkDipChip();
+
+
+    if ((typeof respDipChip != 'string' && respDipChip.status &&
+              respDipChip.status == 404) ||
+              getDipChipFlag(respDipChip) == 'N'
+    ) {
+    // send notification
+      const dataIdpErrorResponse = {
+        'reference_id': '',
+        'request_id': req.body.request_id,
+        'node_id': req.body.node_id,
+        'error_code': 30300,
+        'urlCustom': 'callbackRequestModule',
+        'callbackHandleURL': 'callbackRequestModule',
+      };
+
+      await sendErrorResponse(dataIdpErrorResponse);
+      // check http response
+      // if (this.utils().http().isError(getResponse)) {
+      // this.stat(appName+' returned '+nodeCmd+' system error');
+      // } else if (getResponse.status != 204 && getResponse.status != 202) {
+      // eslint-disable-next-line max-len
+      // this.stat(appName+' returned '+nodeCmd+' system error');
+      // } else {
+      //  this.stat(appName+' returned '+nodeCmd+' system error');
+      // }
     }
   }
 

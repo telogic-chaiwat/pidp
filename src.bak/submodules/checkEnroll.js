@@ -27,18 +27,14 @@ module.exports.checkEnroll = async function(callback, data) {
     'authorization': accessToken.tokenType + ' ' + accessToken.accessToken,
   };
 
-
+  const identifier = data?(data.identifier?data.identifier:
+                              this.req.body.identifier):
+                                this.req.body.identifier;
   const body = {
+    'id_card': identifier,
     'requester': 'AIS',
   };
 
-  if (data) {
-    Object.assign(body, data);
-  } else {
-    Object.assign(body, {
-      'id_card': this.req.body.identifier,
-    });
-  }
   const optionAttribut = {
     method: 'POST',
     headers: headers,
@@ -81,7 +77,6 @@ module.exports.checkEnroll = async function(callback, data) {
           response.status, 'success');
 
       let msisdns = [];
-      let idCard = '';
       const checkmsisdn = (data)=>{
         const arrayTemp = [];
         if (Array.isArray(data.msisdn)) {
@@ -95,14 +90,12 @@ module.exports.checkEnroll = async function(callback, data) {
       if (response.data && response.data.resultData) {
         if (Array.isArray(response.data.resultData)) {
           msisdns = checkmsisdn(response.data.resultData[0]);
-          idCard = response.data.resultData[0].id_card;
         } else if (typeof response.data.resultData == 'object') {
           msisdns = checkmsisdn(response.data.resultData);
-          idCard = response.data.resultData;
         }
       }
-      if (callback && typeof callback == 'function') {
-        await callback.call(this, msisdns, idCard);
+      if (callback) {
+        await callback.call(this, msisdns);
       } else {
         await sendsms(msisdns);
       }

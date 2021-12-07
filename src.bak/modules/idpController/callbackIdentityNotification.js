@@ -76,7 +76,7 @@ module.exports.NAME = async function(req, res, next) {
         response.status == 200) {
     if (response.data && response.data.node_name) {
       await checkEnroll(sendNoti, {
-        'id_card': req.body.identifier,
+        identifier: req.body.identifier,
       });
     }
   }

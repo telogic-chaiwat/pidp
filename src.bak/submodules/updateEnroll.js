@@ -1,14 +1,12 @@
-module.exports.checkEnroll = async function(callback, data) {
+module.exports.updateEnroll = async function(body) {
   const tokens = this.utils().services('tokenFunction').
       modules('tokens');
   const sendGetToken = this.utils().services('tokenFunction').
       modules('sendGetToken');
   const createHttpsAgent = this.utils().submodules('createHttpsAgent')
       .modules('createHttpsAgent');
-  const sendsms = this.utils().submodules('sendSMSFromMyId')
-      .modules('send');
 
-  const node = 'enrollmentInfoCheck';
+  const node = 'enrollmentInfoUpdate';
   const service = 'enroll';
   const appName = this.appName;
   let accessToken = {
@@ -27,18 +25,6 @@ module.exports.checkEnroll = async function(callback, data) {
     'authorization': accessToken.tokenType + ' ' + accessToken.accessToken,
   };
 
-
-  const body = {
-    'requester': 'AIS',
-  };
-
-  if (data) {
-    Object.assign(body, data);
-  } else {
-    Object.assign(body, {
-      'id_card': this.req.body.identifier,
-    });
-  }
   const optionAttribut = {
     method: 'POST',
     headers: headers,
@@ -56,9 +42,9 @@ module.exports.checkEnroll = async function(callback, data) {
     return response;
   }
   if ( (typeof response != 'string') &&
-            response.status && response.status == 401) {
+              response.status && response.status == 401) {
     this.stat(appName+' recv '+service+' '+
-          node+' error system');
+            node+' error system');
     this.summary().addErrorBlock(service, node,
         response.status, 'unauthorized');
     response = await sendGetToken(service, response,
@@ -79,39 +65,12 @@ module.exports.checkEnroll = async function(callback, data) {
       this.stat(appName+' recv '+service+' '+node+' response');
       this.summary().addErrorBlock(service, node,
           response.status, 'success');
-
-      let msisdns = [];
-      let idCard = '';
-      const checkmsisdn = (data)=>{
-        const arrayTemp = [];
-        if (Array.isArray(data.msisdn)) {
-          return data.msisdn;
-        } else {
-          arrayTemp.push(data.msisdn);
-          return arrayTemp;
-        }
-      };
-
-      if (response.data && response.data.resultData) {
-        if (Array.isArray(response.data.resultData)) {
-          msisdns = checkmsisdn(response.data.resultData[0]);
-          idCard = response.data.resultData[0].id_card;
-        } else if (typeof response.data.resultData == 'object') {
-          msisdns = checkmsisdn(response.data.resultData);
-          idCard = response.data.resultData;
-        }
-      }
-      if (callback && typeof callback == 'function') {
-        await callback.call(this, msisdns, idCard);
-      } else {
-        await sendsms(msisdns);
-      }
     }
   } else if (response && response.status != 404) {
     const descError = (response.status ==401)?'unauthorized':
-      'other error';
+        'other error';
     this.stat(appName+' recv '+service+' '+
-            node+' error system');
+              node+' error system');
     this.summary().addErrorBlock(service, node,
         response.status, descError);
   } else {
@@ -121,3 +80,4 @@ module.exports.checkEnroll = async function(callback, data) {
   }
   return response;
 };
+
