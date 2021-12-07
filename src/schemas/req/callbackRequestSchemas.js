@@ -31,7 +31,7 @@ const bodySchema = Joi.object({
   creation_block_height: Joi.string().required(),
   request_timeout: Joi.number().required(),
   // requester_node_detail: Joi.string().required(),
-  namespace: Joi.string().valid('citizen_id').required(),
+  namespace: Joi.string().valid('citizen_id').optional(),
   identifier: Joi.string().length(13).optional(),
   reference_group_code: Joi.string().when('identifier', {
     is: Joi.exist(),
