@@ -332,7 +332,7 @@ module.exports.NAME = async function(req, res, next) {
         selector: {'request_id': req.body.request_id},
         update: {
           $set: {
-            'name_space': 'citizen_id',
+            'namespace': 'citizen_id',
             'identifier': idCard,
           },
         },
