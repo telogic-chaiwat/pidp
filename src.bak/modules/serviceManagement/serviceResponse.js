@@ -173,6 +173,10 @@ module.exports.NAME = async function(req, res, next) {
   const bodyDataServices = (bodydata.services && bodydata.services.length ) ?
   bodydata.services[0] : {};
 
+  //Add to handle serviceName : ""
+  if(bodyDataServices && bodyDataServices.serviceName=="") bodyDataServices.serviceName='verify';
+
+
   const doc = {
     $set: {
       'channelName': bodydata.channelName,

@@ -152,7 +152,21 @@ module.exports.NAME = async function(req, res, next) {
       serviceName = (record.data_request_list[0].service_id)?
               record.data_request_list[0].service_id: 'verify';
     }
-    if(serviceName=='verify') record.data_request_list=[{service_id : 'verify'}];
+    if (serviceName == 'verify') {
+      if (record.data_request_list && Array.isArray(record.data_request_list)) {
+        record.data_request_list.push({
+          service_id: serviceName,
+        });
+      } else {
+        Object.assign(record, {
+          data_request_list: [
+            {
+              service_id: serviceName,
+            },
+          ],
+        });
+      }
+    }
     doc = {
       requestReferenceId: randomstringHex(),
       request_id: record.request_id || null,

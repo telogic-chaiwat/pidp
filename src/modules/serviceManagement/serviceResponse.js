@@ -173,10 +173,6 @@ module.exports.NAME = async function(req, res, next) {
   const bodyDataServices = (bodydata.services && bodydata.services.length ) ?
   bodydata.services[0] : {};
 
-  //Add to handle serviceName : ""
-  if(bodyDataServices && bodyDataServices.serviceName=="") bodyDataServices.serviceName='verify';
-
-
   const doc = {
     $set: {
       'channelName': bodydata.channelName,
@@ -256,12 +252,23 @@ module.exports.NAME = async function(req, res, next) {
             (!(bodyDataServices.serviceName === 'verify'))) {
     // update enrollment
     let statusEnroll = '';
-    let bodyToEnroll = {};
+    const bodyToEnroll = {
+      'id_card': req.body.identityValue,
+      'channelName': req.body.channelName,
+      'locationCode': req.body.locationCode,
+      'userId': req.body.userId,
+      'referenceId': req.body.requestReferenceId,
+      'requester': req.body.requester,
+    };
     try {
-      bodyToEnroll = JSON.parse(bodyDataServices.serviceOutputValue);
+      const enrollmentInfoObj = JSON.parse(bodyDataServices.serviceOutputValue);
+      Object.assign(bodyToEnroll, {
+        'enrollmentInfo': enrollmentInfoObj,
+      });
     } catch (err) {
       // eslint-disable-next-line max-len
       this.debug('error parsing serviceOutputValue, error message : '+ err.message);
+      // this.debug('[Service Response]error while prepare enroll data');
       statusEnroll = 'error';
     }
     if (statusEnroll == 'error') {

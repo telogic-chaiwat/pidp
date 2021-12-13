@@ -4,8 +4,7 @@ const {authorization, contentType} = require('../headers');
 const servicesFields = Joi.object({
   'serviceName': Joi
       .string()
-      .allow('')
-      .allow(null),
+      .required(),
 
   'serviceResultCode': Joi
       .string()
