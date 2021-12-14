@@ -64,6 +64,7 @@ module.exports.NAME = async function(req, res, next) {
         'identifier': req.body.identityValue,
       },
     },
+    {'$sort':{'creation_time':1}},
     {
       '$facet': {
         'result': [{$skip: skip}, {$limit: limit}],
