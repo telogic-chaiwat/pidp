@@ -59,27 +59,12 @@ module.exports.NAME = async function(req, res, next) {
   const skip = req.body.start || 0;
   const query = [
     {
-      '$addFields': {
-        'year_month': {
-          '$dateToString': {
-            format: '%Y-%m',
-            date: {$toDate: '$creation_time'},
-            timezone: '+07:00',
-          },
-        },
-      },
-    },
-    {
       '$match': {
         'namespace': req.body.identityType,
         'identifier': req.body.identityValue,
       },
     },
-    {
-      '$sort': {
-        creation_time: -1,
-      },
-    },
+    {'$sort':{'creation_time':1}},
     {
       '$facet': {
         'result': [{$skip: skip}, {$limit: limit}],
@@ -87,12 +72,6 @@ module.exports.NAME = async function(req, res, next) {
       },
     },
   ];
-
-  if (req.body.year_month) {
-    Object.assign(query[1].$match, {
-      'year_month': req.body.year_month,
-    });
-  }
   const mongoOptAttribut = {
     collection: collectionName.IDENTITY_REQUEST,
     commandName: 'query_identity_request',

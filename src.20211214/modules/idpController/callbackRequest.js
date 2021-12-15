@@ -238,77 +238,75 @@ module.exports.NAME = async function(req, res, next) {
     await returnError(status.DATA_NOT_FOUND);
     return;
   }
-  // REQ : ONLY MODE : 1 will send SIGN
-  if (req.body.mode == 1) {
-    const signNodeName = 'ndid_sign';
-    const signServiceName = 'ndid';
-    const confSignNode = this.utils().services('ndid')
-        .conf(signNodeName);
 
-    const bodydataSign = {
-      node_id: req.body.node_id,
-      request_message: req.body.request_message,
-      request_message_hash: req.body.request_message_hash,
-      hash_method: confSignNode.hash_method,
-      key_type: confSignNode.key_type,
-      sign_method: confSignNode.sign_method,
-    };
-    const optionAttributSign = {
-      method: 'POST',
-      headers: headers,
-      _service: signServiceName,
-      _command: signNodeName,
-      data: bodydataSign,
-    };
-    Object.assign(optionAttributSign,
-        {httpsAgent: createHttpsAgent(signServiceName, signNodeName)});
+  const signNodeName = 'ndid_sign';
+  const signServiceName = 'ndid';
+  const confSignNode = this.utils().services('ndid')
+      .conf(signNodeName);
 
-    const responseSign = await this.utils().http().request(optionAttributSign);
-    if (this.utils().http().isError(responseSign)) {
-      await returnError(status.SYSTEM_ERROR);
-      return;
-    }
+  const bodydataSign = {
+    node_id: req.body.node_id,
+    request_message: req.body.request_message,
+    request_message_hash: req.body.request_message_hash,
+    hash_method: confSignNode.hash_method,
+    key_type: confSignNode.key_type,
+    sign_method: confSignNode.sign_method,
+  };
+  const optionAttributSign = {
+    method: 'POST',
+    headers: headers,
+    _service: signServiceName,
+    _command: signNodeName,
+    data: bodydataSign,
+  };
+  Object.assign(optionAttributSign,
+      {httpsAgent: createHttpsAgent(signServiceName, signNodeName)});
 
-    if (responseSign.status != 200) {
+  const responseSign = await this.utils().http().request(optionAttributSign);
+  if (this.utils().http().isError(responseSign)) {
+    await returnError(status.SYSTEM_ERROR);
+    return;
+  }
+
+  if (responseSign.status != 200) {
     // eslint-disable-next-line max-len
-      const errorDesc = (responseSign.status==404)?'not found':
+    const errorDesc = (responseSign.status==404)?'not found':
         (responseSign.data)?responseSign.data.error:'body data is not found';
-      this.stat(appName+' recv '+signServiceName+' '+signNodeName+
+    this.stat(appName+' recv '+signServiceName+' '+signNodeName+
         ' error response');
-      this.summary().addErrorBlock(signServiceName, signNodeName,
-          responseSign.status, errorDesc);
-      await returnError(status.SYSTEM_ERROR);
-      return;
-    }
-
-    this.stat(appName+' recv '+signServiceName+' '+signNodeName+' response');
     this.summary().addErrorBlock(signServiceName, signNodeName,
-        responseSign.status, 'success');
+        responseSign.status, errorDesc);
+    await returnError(status.SYSTEM_ERROR);
+    return;
+  }
 
-    const optionAttributMongoSign = {
-      collection: collectionName.IDENTITY_REQUEST,
-      commandName: 'update_identity_request',
-      invoke: initInvoke,
-      selector: {'request_id': req.body.request_id},
-      update: {
-        $set: {
-          'signature': responseSign.data.signature,
-        },
+  this.stat(appName+' recv '+signServiceName+' '+signNodeName+' response');
+  this.summary().addErrorBlock(signServiceName, signNodeName,
+      responseSign.status, 'success');
+
+  const optionAttributMongoSign = {
+    collection: collectionName.IDENTITY_REQUEST,
+    commandName: 'update_identity_request',
+    invoke: initInvoke,
+    selector: {'request_id': req.body.request_id},
+    update: {
+      $set: {
+        'signature': responseSign.data.signature,
       },
-      max_retry: confMongo.max_retry,
-      timeout: (confMongo.timeout*1000),
-      retry_condition: 'CONNECTION_ERROR|TIMEOUT',
-    };
-    const mongoResponseSign = await mongoUpdate(this, optionAttributMongoSign);
-    if (mongoResponseSign && mongoResponseSign == 'error') {
-      await returnError(status.SYSTEM_ERROR);
-      return;
-    }
-    // data not found
-    if (mongoResponseSign.n && mongoResponseSign.n == 0) {
-      await returnError(status.DATA_NOT_FOUND);
-      return;
-    }
+    },
+    max_retry: confMongo.max_retry,
+    timeout: (confMongo.timeout*1000),
+    retry_condition: 'CONNECTION_ERROR|TIMEOUT',
+  };
+  const mongoResponseSign = await mongoUpdate(this, optionAttributMongoSign);
+  if (mongoResponseSign && mongoResponseSign == 'error') {
+    await returnError(status.SYSTEM_ERROR);
+    return;
+  }
+  // data not found
+  if (mongoResponseSign.n && mongoResponseSign.n == 0) {
+    await returnError(status.DATA_NOT_FOUND);
+    return;
   }
 
   // new requierment to check enroll and Dipchip (myid) 18-10-2021

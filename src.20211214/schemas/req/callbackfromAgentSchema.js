@@ -8,13 +8,14 @@ const headersSchema = Joi.object({
 
 
 const bodySchema = Joi.object({
-  'identityType': Joi.string().required(),
-  'identityValue': Joi.string().required(),
-  'start': Joi.number().optional().default(0),
-  'limit': Joi.number().optional().default(20),
-  'year_month': Joi.string().optional(),
+  'request_id': Joi.string().required(),
+  'reference_id': Joi.string().required(),
+  'ial': Joi.number().required(),
+  'aal': Joi.number().required(),
+  'status': Joi.string().required(),
+  'signature': Joi.string().required(),
+  'resultcode': Joi.number().required(),
 });
-
 
 module.exports = {
   headersSchema,

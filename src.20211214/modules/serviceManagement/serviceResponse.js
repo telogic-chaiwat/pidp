@@ -402,12 +402,6 @@ module.exports.NAME = async function(req, res, next) {
       // 'accessor_id': '',
       //  'node_id': '',
     };
-
-    if (mcTransaction && mcTransaction.mode && mcTransaction.mode > 1) {
-      Object.assign(bodydataToIdp, {
-        accessor_id: mcTransaction.accessor_id,
-      });
-    }
     const method = 'POST';
     const optionAttribut = {
       method: method,
