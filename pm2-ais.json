@@ -133,6 +133,24 @@
                                 "key" : null,
                                 "cert" : null
                             }
+                        },
+                        "ndid_request_hash" :{
+                            "conn_type": "http",
+                            "ip": "10.144.9.196",
+                            "port": "3000",
+                            "path": "/idp/request_message_padded_hash",
+                            "max_retry": 0,
+                            "timeout": 3,
+                            "retry_condition":"TIMEOUT|CONNECTION_ERROR",
+                            "hash_method" : "SHA256",
+                            "key_type" : "RSA",
+                            "sign_method" : "RSA-SHA256",
+                            "ca-cert" : null,
+                            "rejectUnauthorized" : true,
+                            "clientCert" :{
+                                "key" : null,
+                                "cert" : null
+                            }
                         }
                     },
                     "myIDS" :{
