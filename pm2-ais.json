@@ -72,6 +72,9 @@
                             "clientCert" :{
                                 "key" : null,
                                 "cert" : null
+                            },
+			    "callback_url":{
+                                "serviceResponseModule" : "https://10.144.9.196:9102/idp/response"
                             }
                             
                         },
