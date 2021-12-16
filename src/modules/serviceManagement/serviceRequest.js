@@ -313,7 +313,7 @@ module.exports.NAME = async function(req, res, next) {
         Object.assign(doc, {
           'accessor_id': accessorId,
           'mode': record.mode,
-          'signature': signResult,
+          'signature': record.signature || signResult,
         });
       }
     }
