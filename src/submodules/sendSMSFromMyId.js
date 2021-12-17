@@ -121,14 +121,14 @@ module.exports.send = function(data) {
 };
 */
 
-module.exports.send =async function(data) {
+module.exports.send =async function(data,content) {
   //
   if (Array.isArray(data) == false) {
     this.debug('msisdn data is not in array type');
     resolve();
   }
   for (let i = 0; i < data.length; i++) {
-    await sendSMS.call(this, data[i]);
+    await sendSMS.call(this, data[i],content);
   }
   return;
 };
