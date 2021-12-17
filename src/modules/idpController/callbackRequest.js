@@ -229,7 +229,7 @@ module.exports.NAME = async function(req, res, next) {
     retry_condition: 'CONNECTION_ERROR|TIMEOUT',
   };
 
-  let marketing_name="";
+  let marketing_name_th="";
   let node_obj=JSON.parse(responseUtility.data.node_name);
   if(node_obj) marketing_name_th=node_obj.marketing_name_th;
   let smsContent='คุณได้รับคำขอยืนยันตัวตน และขอความยินยอมในการใช้ข้อมูลของคุณในการยืนยันตัวตนกับ AIS/AWN กรุณาตรวจสอบให้แน่ชัดว่าเป็นการสมัครใช้บริการของคุณ ก่อน Log-in เข้า myAIS App เพื่อยืนยันตัวตนการเปิดบัญชี '+marketing_name_th;
