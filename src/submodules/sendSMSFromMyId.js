@@ -4,7 +4,7 @@
  * @param {msisdn}  msisdn number phone.
  * @return {promise} response from server
 */
-async function sendSMS(msisdn) {
+async function sendSMS(msisdn,smsContent) {
   //
   const service = 'myIDS';
   const nodeName = 'sms';
@@ -18,7 +18,7 @@ async function sendSMS(msisdn) {
   const createHttpsAgent = this.utils().submodules('createHttpsAgent')
       .modules('createHttpsAgent');
 
-  const smsContent = this.utils().app().const('sms_content');
+  //const smsContent = this.utils().app().const('sms_content');
 
 
   let accessToken = {
