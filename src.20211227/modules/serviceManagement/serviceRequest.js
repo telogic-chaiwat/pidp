@@ -17,6 +17,8 @@ module.exports.NAME = async function(req, res, next) {
       modules('find');
   const mongoInsert = this.utils().services('mongoFunction')
       .modules('insert');
+  const mongoUpdate = this.utils().services('mongoFunction')
+      .modules('update');
   const collectionName = this.utils().services('enum')
       .modules('collectionMongo');
   const confMongo = this.utils().services('mongo')
@@ -26,6 +28,12 @@ module.exports.NAME = async function(req, res, next) {
   const timeoutFilter = this.utils().submodules('timeoutFilter')
       .modules('timeoutFilter');
   const randomstring = require('randomstring');
+  const enrollchecking = this.utils().submodules('checkEnroll')
+      .modules('checkEnroll');
+  const requestHash = this.utils().submodules('requestHash')
+      .modules('requestHash');
+  const createSign = this.utils().submodules('createSign')
+      .modules('createSign');
 
   const randomstringHex = () => {
     return randomstring.generate({
@@ -127,7 +135,7 @@ module.exports.NAME = async function(req, res, next) {
     res.status(resp.status).send(resp.body);
     return;
   }
-
+  // NEW REQ CHECK MODE AND ACCESSOR ID
   let doc = { };
   const docs = [];
   const docTransaction = [];
@@ -135,7 +143,120 @@ module.exports.NAME = async function(req, res, next) {
   let service = {};
   const timeOutArray = [];
 
-  mongoResponse.forEach((record) => {
+  // mongoResponse.forEach((record) => {
+  for (let i = 0; i< mongoResponse.length; i++) {
+    const record = mongoResponse[i];
+
+    let accessorId = null;
+    let signResult = null;
+    if (record.mode > 1) {
+      let accessorKey = null;
+      let messagePadded = null;
+      //let signResult = null;
+      // if accessor_id is not available
+      if (!(record.accessor_id)) {
+        this.debug('accessor_id is not found do enrollment check');
+        const paramToEnroll = {
+          'id_card': record.identifier,
+        };
+        const respEnrollCheck = await enrollchecking(async ()=>{
+          return;
+        }, paramToEnroll);
+
+        if (this.utils().http().isError(respEnrollCheck)) {
+          this.stat(appName+' returned '+nodeCmd+' '+'system error');
+          const resp = buildResponse(status.DB_ERROR);
+          res.status(resp.status).send(resp.body);
+          return;
+        }
+        if (respEnrollCheck.status == 200 && respEnrollCheck.data &&
+          respEnrollCheck.data.resultCode == '20020') {
+          this.stat(appName+' returned '+nodeCmd+' '+' error');
+          const resp = buildResponse(status.DATA_NOT_FOUND_200);
+          res.status(resp.status).send(resp.body);
+          return;
+        }
+
+        if (respEnrollCheck.status == 200 && respEnrollCheck.data &&
+          respEnrollCheck.data.resultData) {
+          accessorId = respEnrollCheck.data.resultData[0].accessor_id;
+          accessorKey = respEnrollCheck.data.resultData[0].accessor_private_key;
+        }
+      } else {
+        accessorId = record.accessor_id;
+        accessorKey = record.accessor_private_key ||
+                        record.onboard_accessor_private_key;
+      }
+      // if request_message_padded is not available
+      if (!(record.request_message_padded)) {
+        this.debug('request_message_padded is not found do Request HASH');
+        const body = {
+          params: {
+            accessor_id: accessorId,
+            request_id: record.request_id,
+          },
+        };
+        const respReqHash = await requestHash(body);
+
+        if (this.utils().http().isError(respReqHash)) {
+          this.stat(appName+' returned '+nodeCmd+' '+'system error');
+          const resp = buildResponse(status.DB_ERROR);
+          res.status(resp.status).send(resp.body);
+          return;
+        }
+        if (respReqHash.status != 200) {
+          this.stat(appName+' returned '+nodeCmd+' '+' error');
+          const resp = buildResponse(status.SYSTEM_ERROR);
+          res.status(resp.status).send(resp.body);
+          return;
+        }
+        messagePadded = respReqHash.data.request_message_padded_hash;
+      }
+      if (accessorId && messagePadded) {
+        try {
+          signResult = createSign(accessorKey, messagePadded);
+        } catch (err) {
+          this.stat(appName+' returned '+nodeCmd+' '+' error');
+          const resp = buildResponse(status.SYSTEM_ERROR);
+          res.status(resp.status).send(resp.body);
+          return;
+        }
+      }
+      if (signResult) {
+        mongoOptAttribut = {
+          collection: collectionName.IDENTITY_REQUEST,
+          commandName: 'update_identity_request',
+          invoke: initInvoke,
+          selector: {'request_id': record.request_id},
+          update: {
+            $set: {
+              'request_message_padded_hash': messagePadded,
+              'signature': signResult,
+	      'accessor_id' : accessorId,
+	      'accessor_private_key' : accessorKey,
+            },
+          },
+          max_retry: confMongo.max_retry,
+          timeout: (confMongo.timeout*1000),
+          retry_condition: 'CONNECTION_ERROR|TIMEOUT',
+        };
+        const respMongoUpdate = await mongoUpdate(this, mongoOptAttribut);
+
+        if (respMongoUpdate == 'error') {
+          this.stat(appName+' returned '+nodeCmd+' '+'system error');
+          const resp = buildResponse(status.DB_ERROR);
+          res.status(resp.status).send(resp.body);
+          return;
+        }
+        if (respMongoUpdate.n && respMongoUpdate.n == 0) {
+          this.stat(appName+' returned '+nodeCmd+' '+'system error');
+          const resp = buildResponse(status.DB_ERROR);
+          res.status(resp.status).send(resp.body);
+          return;
+        }
+      }
+    }
+
     let reqNodeDetail = null;
     try {
       reqNodeDetail = (record.requester_node_detail) ?
@@ -152,7 +273,21 @@ module.exports.NAME = async function(req, res, next) {
       serviceName = (record.data_request_list[0].service_id)?
               record.data_request_list[0].service_id: 'verify';
     }
-    if(serviceName=='verify') record.data_request_list=[{service_id : 'verify'}];
+    if (serviceName == 'verify') {
+      if (record.data_request_list && Array.isArray(record.data_request_list)) {
+        record.data_request_list.push({
+          service_id: serviceName,
+        });
+      } else {
+        Object.assign(record, {
+          data_request_list: [
+            {
+              service_id: serviceName,
+            },
+          ],
+        });
+      }
+    }
     doc = {
       requestReferenceId: randomstringHex(),
       request_id: record.request_id || null,
@@ -166,7 +301,7 @@ module.exports.NAME = async function(req, res, next) {
       request_at: new Date(),
       status: 'pending',
       timeout: false,
-      signature: record.signature || null,
+      signature: record.signature || signResult || null,
       requesterInformation: getReqInformation(record.request_message),
       requester_node_id: record.requester_node_id || null,
       creation_time: record.creation_time || null,
@@ -174,6 +309,16 @@ module.exports.NAME = async function(req, res, next) {
     };
 
     removeEmptyField(doc);
+
+    if (record.mode > 1) {
+      if (accessorId) {
+        Object.assign(doc, {
+          'accessor_id': accessorId,
+          'mode': record.mode,
+          'signature': record.signature || signResult,
+        });
+      }
+    }
 
     if (record.data_request_list && Array.isArray(record.data_request_list)) {
       record.data_request_list.forEach((dataRequest) => {
@@ -189,7 +334,8 @@ module.exports.NAME = async function(req, res, next) {
     services = [];
     docs.push(doc);
     timeOutArray.push(record.request_timeout);
-  });
+  }
+  // });
 
   mongoOptAttribut = {
     collection: collectionName.TRANSACTION,

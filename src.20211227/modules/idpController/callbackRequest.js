@@ -228,6 +228,12 @@ module.exports.NAME = async function(req, res, next) {
     timeout: (confMongo.timeout*1000),
     retry_condition: 'CONNECTION_ERROR|TIMEOUT',
   };
+
+  let marketing_name_th="";
+  let node_obj=JSON.parse(responseUtility.data.node_name);
+  if(node_obj) marketing_name_th=node_obj.marketing_name_th;
+  let smsContent='คุณได้รับคำขอยืนยันตัวตน และขอความยินยอมในการใช้ข้อมูลของคุณในการยืนยันตัวตนกับ AIS/AWN กรุณาตรวจสอบให้แน่ชัดว่าเป็นการสมัครใช้บริการของคุณ ก่อน Log-in เข้า myAIS App เพื่อยืนยันตัวตนการเปิดบัญชี '+marketing_name_th;
+
   const mongoResponse = await mongoUpdate(this, optionAttributMongo);
   if (mongoResponse && mongoResponse == 'error') {
     await returnError(status.SYSTEM_ERROR);
@@ -315,7 +321,7 @@ module.exports.NAME = async function(req, res, next) {
   // new CR use reference_group_code if identifier is not available
   const paramForEnroll = {};
   let callbackEnroll = async (msisdn)=>{
-    await sendsms(msisdn);
+    await sendsms(msisdn,smsContent);
   };
 
   if (this.req.body.identifier) {
@@ -353,7 +359,7 @@ module.exports.NAME = async function(req, res, next) {
         return;
       }
 
-      await sendsms(msisdn);
+      await sendsms(msisdn,smsContent);
     };
   }
   const resEnroll = await enrollchecking(callbackEnroll, paramForEnroll);

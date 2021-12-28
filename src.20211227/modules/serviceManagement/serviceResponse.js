@@ -356,7 +356,7 @@ module.exports.NAME = async function(req, res, next) {
 
   const confStatusSrvOpt = {
     bodydata: {
-      reference_id: mcTransaction.confirmCode || '',
+      reference_id: mcTransaction.requestReferenceId || '',
       request_id: mcTransaction.request_id || '',
       aal: mcTransaction.min_aal || 1,
       ial: mcTransaction.min_ial || 1.1,

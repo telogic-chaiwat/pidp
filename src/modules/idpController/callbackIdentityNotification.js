@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 module.exports.NAME = async function(req, res, next) {
   const headersReqSchema = this.utils().
       schemas('req.callbackIdentityNotificationSchema.headersSchema');
@@ -68,14 +69,45 @@ module.exports.NAME = async function(req, res, next) {
   // SEND TO UTILITY
 
   const body = {
-    node_id: req.body.node_id,
+    node_id: req.body.actor_node_id,
   };
   const response = await getUtility(body);
 
   if (typeof response != 'string' && response.status &&
         response.status == 200) {
+    const callback = function(msisdns) {
+      const messageCreate = this.utils().app().const('notification_create');
+      const messageRevoke = this.utils().app().const('notification_revoke');
+      let message = 'sent notification';
+
+      if (req.body.action == 'create_identity') {
+        message = messageCreate;
+      } else if (req.body.action == 'revoke_identity_association') {
+        message = messageRevoke;
+      }
+
+      if (response.data && response.data.node_name) {
+        try {
+          const objNodeName = JSON.parse(response.data.node_name);
+          if (objNodeName && objNodeName.marketing_name_th) {
+            // eslint-disable-next-line max-len
+            message = message.replace('[marketing_name_th]', objNodeName.marketing_name_th);
+          } else {
+            this.debug('[callbackIdentityNotification] marketing_name_th is not found');
+          }
+        } catch (err) {
+          // eslint-disable-next-line max-len
+          this.debug('[callbackIdentityNotification] Error While parse node_name');
+          this.debug(err.message);
+        }
+      } else {
+        this.debug('[callbackIdentityNotification] node_name is not found');
+      }
+      sendNoti(msisdns, message);
+    };
+
     if (response.data && response.data.node_name) {
-      await checkEnroll(sendNoti, {
+      await checkEnroll(callback, {
         'id_card': req.body.identifier,
       });
     }

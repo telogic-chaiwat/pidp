@@ -228,12 +228,6 @@ module.exports.NAME = async function(req, res, next) {
     timeout: (confMongo.timeout*1000),
     retry_condition: 'CONNECTION_ERROR|TIMEOUT',
   };
-
-  let marketing_name_th="";
-  let node_obj=JSON.parse(responseUtility.data.node_name);
-  if(node_obj) marketing_name_th=node_obj.marketing_name_th;
-  let smsContent='คุณได้รับคำขอยืนยันตัวตน และขอความยินยอมในการใช้ข้อมูลของคุณในการยืนยันตัวตนกับ AIS/AWN กรุณาตรวจสอบให้แน่ชัดว่าเป็นการสมัครใช้บริการของคุณ ก่อน Log-in เข้า myAIS App เพื่อยืนยันตัวตนการเปิดบัญชี '+marketing_name_th;
-
   const mongoResponse = await mongoUpdate(this, optionAttributMongo);
   if (mongoResponse && mongoResponse == 'error') {
     await returnError(status.SYSTEM_ERROR);
@@ -320,8 +314,33 @@ module.exports.NAME = async function(req, res, next) {
   // new requierment to check enroll and Dipchip (myid) 18-10-2021
   // new CR use reference_group_code if identifier is not available
   const paramForEnroll = {};
+  let message = this.utils().app().const('sms_content');
+
+  if (responseUtility.data && responseUtility.data.node_name) {
+    try {
+      const objNodeName = JSON.parse(responseUtility.data.node_name);
+      if (objNodeName && objNodeName.marketing_name_th) {
+        // eslint-disable-next-line max-len
+        message = message.replace('[marketing_name_th]', objNodeName.marketing_name_th);
+      } else {
+        // eslint-disable-next-line max-len
+        this.debug('[callbackRequest] marketing_name_th is not found');
+      }
+    } catch (err) {
+      // eslint-disable-next-line max-len
+      this.debug('[callbackRequest] Error While parse node_name');
+      this.debug(err.message);
+    }
+  } else {
+    this.debug('[callbackRequest] node_name is not found');
+  }
+
   let callbackEnroll = async (msisdn)=>{
-    await sendsms(msisdn,smsContent);
+    await sendsms(msisdn, message);
+  };
+
+  const callbackDipChip = async (msisdn)=>{
+    await sendsms(msisdn, message);
   };
 
   if (this.req.body.identifier) {
@@ -359,7 +378,7 @@ module.exports.NAME = async function(req, res, next) {
         return;
       }
 
-      await sendsms(msisdn,smsContent);
+      await sendsms(msisdn, message);
     };
   }
   const resEnroll = await enrollchecking(callbackEnroll, paramForEnroll);
@@ -368,7 +387,7 @@ module.exports.NAME = async function(req, res, next) {
         resEnroll.data.resultCode == '20020' && resEnroll.status == 200) {
     // if identifer is available
     if (this.req.body.identifier) {
-      const respDipChip = await checkDipChip();
+      const respDipChip = await checkDipChip(callbackDipChip);
       if ((typeof respDipChip != 'string' && respDipChip.status &&
                 respDipChip.status == 404) ||
                 getDipChipFlag(respDipChip) == 'N'

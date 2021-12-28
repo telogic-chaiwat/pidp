@@ -2,9 +2,10 @@
 /**
   * this to send sms with myID API
  * @param {msisdn}  msisdn number phone.
+ * @param {message}  message message phone.
  * @return {promise} response from server
 */
-async function sendSMS(msisdn,smsContent) {
+async function sendSMS(msisdn, message) {
   //
   const service = 'myIDS';
   const nodeName = 'sms';
@@ -18,8 +19,11 @@ async function sendSMS(msisdn,smsContent) {
   const createHttpsAgent = this.utils().submodules('createHttpsAgent')
       .modules('createHttpsAgent');
 
-  //const smsContent = this.utils().app().const('sms_content');
+  let smsContent = 'You have successfully registered';
 
+  if (message) {
+    smsContent = message;
+  }
 
   let accessToken = {
     tokenType: 'Bearer',
@@ -121,14 +125,14 @@ module.exports.send = function(data) {
 };
 */
 
-module.exports.send =async function(data,content) {
+module.exports.send =async function(data, message) {
   //
   if (Array.isArray(data) == false) {
     this.debug('msisdn data is not in array type');
     resolve();
   }
   for (let i = 0; i < data.length; i++) {
-    await sendSMS.call(this, data[i],content);
+    await sendSMS.call(this, data[i], message);
   }
   return;
 };

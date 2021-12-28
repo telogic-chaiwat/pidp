@@ -1,4 +1,4 @@
-module.exports.checkDipChip = async function() {
+module.exports.checkDipChip = async function(callback) {
   const tokens = this.utils().services('tokenFunction').
       modules('tokens');
   const sendGetToken = this.utils().services('tokenFunction').
@@ -90,7 +90,11 @@ module.exports.checkDipChip = async function() {
         msisdns = checkmsisdn(response.data.resultData);
       }
     }
-    await sendsms(msisdns);
+    if (callback && typeof callback == 'function') {
+      await callback.call(this, msisdns);
+    } else {
+      await sendsms(msisdns);
+    }
   } else if (response && response.status != 404) {
     const descError = (response.status ==401)?'unauthorized':
         'other error';

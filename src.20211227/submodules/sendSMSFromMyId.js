@@ -4,21 +4,22 @@
  * @param {msisdn}  msisdn number phone.
  * @return {promise} response from server
 */
-async function sendNotification(msisdn) {
+async function sendSMS(msisdn,smsContent) {
   //
   const service = 'myIDS';
-  const nodeName = 'notifications';
+  const nodeName = 'sms';
   const appName = this.appName;
   const tokens = this.utils().services('tokenFunction').
       modules('tokens');
   const sendGetToken = this.utils().services('tokenFunction').
       modules('sendGetToken');
-  const randomstringHex = this.utils().services('basicFunction')
-      .modules('randomstringHex');
+  const generateRandomString = this.utils().services('basicFunction')
+      .modules('generateRandomString');
   const createHttpsAgent = this.utils().submodules('createHttpsAgent')
       .modules('createHttpsAgent');
 
-  const notificationContent = this.utils().app().const('notification_content');
+  //const smsContent = this.utils().app().const('sms_content');
+
 
   let accessToken = {
     tokenType: 'Bearer',
@@ -33,17 +34,15 @@ async function sendNotification(msisdn) {
 
   const headers = {
     'content-type': 'application/json',
+    'authorization': accessToken.tokenType + ' ' + accessToken.accessToken,
     'x-method': 'POST',
   };
-  if (tokens[service]) {
-    Object.assign(headers,
-        {'authorization': accessToken.tokenType + ' ' + accessToken.accessToken});
-  }
+
   const body = {
-    'state': await randomstringHex(),
+    'state': await generateRandomString(),
     'msisdn': msisdn,
     'service_name': 'NDID',
-    'message': notificationContent,
+    'content': smsContent,
 
   };
   const optionAttribut = {
@@ -59,7 +58,7 @@ async function sendNotification(msisdn) {
   let response = await this.utils().http().request(optionAttribut);
 
   if ((this.utils().http().isError(response)) || (typeof response == 'undefined')) {
-    return response;
+    return;
   }
 
   if ( (typeof response != 'string') &&
@@ -71,11 +70,12 @@ async function sendNotification(msisdn) {
     response = await sendGetToken(service, response,
         optionAttribut);
   }
+
   if (response.status && response.status != 200) {
     const errorDesc = (response.status==404)?'data not found':
-        (response.status==403 || response.status==401)?'unauthorized':
-        (response.status==500)?'system error':
-        'other error';
+      (response.status==403 || response.status==401)?'unauthorized':
+      (response.status==500)?'system error':
+      'other error';
     this.stat(this.appName+' recv '+ service+' '+nodeName+' error response');
     this.summary().addErrorBlock(service, nodeName,
         response.status, errorDesc);
@@ -92,44 +92,43 @@ async function sendNotification(msisdn) {
     return response;
   }
 };
-module.exports.sendNotification =sendNotification;
+module.exports.sendSMS =sendSMS;
 
 /*
-  module.exports.send = function(data) {
-    return new Promise((resolve, reject)=>{
-      const promises = [];
-      if (Array.isArray(data) == false) {
-        this.debug('msisdn data is not in array type');
-        resolve();
-      }
+module.exports.send = function(data) {
+  return new Promise((resolve, reject)=>{
+    const promises = [];
+    if (Array.isArray(data) == false) {
+      this.debug('msisdn data is not in array type');
+      resolve();
+    }
 
 
-      for (let i = 0; i < data.length; i++) {
-        promises.push(sendSMS.call(this, data[i]));
-      }
-      Promise.all(promises)
-          .then((results) => {
-            this.debug('all sms have been seet');
-            resolve();
-          })
-          .catch((e) => {
-            this.error('error while send sms, error meesage :/n' + err.message);
-            resolve();
-          });
-    });
+    for (let i = 0; i < data.length; i++) {
+      promises.push(sendSMS.call(this, data[i]));
+    }
+    Promise.all(promises)
+        .then((results) => {
+          this.debug('all sms have been seet');
+          resolve();
+        })
+        .catch((e) => {
+          this.error('error while send sms, error meesage :/n' + err.message);
+          resolve();
+        });
+  });
 
-  };
-  */
+};
+*/
 
-module.exports.sends =async function(data) {
+module.exports.send =async function(data,content) {
   //
   if (Array.isArray(data) == false) {
     this.debug('msisdn data is not in array type');
     resolve();
   }
   for (let i = 0; i < data.length; i++) {
-    await sendNotification.call(this, data[i]);
+    await sendSMS.call(this, data[i],content);
   }
   return;
 };
-

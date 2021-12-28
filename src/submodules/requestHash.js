@@ -1,16 +1,16 @@
 module.exports.requestHash = async function(body) {
   const createHttpsAgent = this.utils().submodules('createHttpsAgent')
       .modules('createHttpsAgent');
-  const generateJWT = this.utils().submodules('generateJWT')
-      .modules('generateJWT');
+  // const generateJWT = this.utils().submodules('generateJWT')
+  //    .modules('generateJWT');
     // const randomstringHex = this.utils().services('basicFunction')
     //    .modules('randomstringHex');
 
   const appName = this.appName || 'pidp';
-  const accToken = await generateJWT();
+  // const accToken = await generateJWT();
   let headers = {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ' + accToken,
+  //  'Authorization': 'Bearer ' + accToken,
   };
 
   if (body.headers) {

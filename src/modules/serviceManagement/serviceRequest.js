@@ -152,7 +152,6 @@ module.exports.NAME = async function(req, res, next) {
     if (record.mode > 1) {
       let accessorKey = null;
       let messagePadded = null;
-      //let signResult = null;
       // if accessor_id is not available
       if (!(record.accessor_id)) {
         this.debug('accessor_id is not found do enrollment check');
@@ -313,7 +312,7 @@ module.exports.NAME = async function(req, res, next) {
         Object.assign(doc, {
           'accessor_id': accessorId,
           'mode': record.mode,
-          'signature': record.signature || signResult,
+          'signature': signResult,
         });
       }
     }

@@ -11,7 +11,7 @@ const bodySchema = Joi.object({
   'node_id': Joi.string().required(),
   'type': Joi.string().valid('identity_modification_notification').required(),
   'reference_group_code': Joi.string().required(),
-  'action': Joi.boolean().valid('create_identity',
+  'action': Joi.string().valid('create_identity',
       'revoke_identity_association', 'add_identity',
       'add_accessor', 'revoke_accessor', 'revoke_and_add_accessor',
       'upgrade_identity_mode').
