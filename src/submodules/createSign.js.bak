@@ -6,7 +6,8 @@ module.exports.createSign = function(privateKey, message_hash) {
         .privateEncrypt(
             {
               key: privateKey,
-              padding: crypto.constants.RSA_NO_PADDING,
+              padding: crypto.constants.OPENSSL_PKCS1_PADDING,
+              passphrase: 'top secret',
             },
             Buffer.from(message_hash, 'base64'),
         )
