@@ -363,7 +363,7 @@ module.exports.NAME = async function(req, res, next) {
       'customerReferenceId': docs[i].customerReferenceId || null,
       'services': (docs[i].services.length) ? docs[i].services : null,
       'confirmCode': docs[i].confirmCode || null,
-      'RPLogoURL': '-',
+      'RPLogoURL': 'https://dl.dropboxusercontent.com/s/6wio7kseqmhesm2/download.png?dl=0',
       'AAL': docs[i].min_aal,
       'requestTime': getDateTime(docs[i].creation_time),
       'expireTime': getDateTime(docs[i].creation_time +
