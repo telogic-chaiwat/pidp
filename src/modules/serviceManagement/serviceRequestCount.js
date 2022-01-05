@@ -106,12 +106,14 @@ module.exports.NAME = async function(req, res, next) {
     return;
   }
   mongoResponse = timeoutFilter(mongoResponse);
+  /*
   if (Array.isArray(mongoResponse) && mongoResponse.length == 0) {
     this.stat(appName+' returned '+nodeCmd+' '+'error');
     const resp = buildResponse(status.DATA_NOT_FOUND);
     res.status(resp.status).send(resp.body);
     return;
   }
+  */
 
   const resp = buildResponse(status.SUCCESS);
 
