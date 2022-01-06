@@ -75,7 +75,7 @@ module.exports.NAME = async function(req, res, next) {
 
   if (typeof response != 'string' && response.status &&
         response.status == 200) {
-    const callback = async function(msisdns) {
+    const callback = function(msisdns) {
       const messageCreate = this.utils().app().const('notification_create');
       const messageRevoke = this.utils().app().const('notification_revoke');
       let message = 'sent notification';
@@ -103,21 +103,13 @@ module.exports.NAME = async function(req, res, next) {
       } else {
         this.debug('[callbackIdentityNotification] node_name is not found');
       }
-      await sendNoti(msisdns, message);
+      sendNoti(msisdns, message);
     };
 
-    const enrollBody = {};
-    if (req.body.identifier) {
-      Object.assign(enrollBody, {
+    if (response.data && response.data.node_name) {
+      await checkEnroll(callback, {
         'id_card': req.body.identifier,
       });
-    } else if (req.body.reference_group_code) {
-      Object.assign(enrollBody, {
-        'reference_group_code': req.body.reference_group_code,
-      });
-    }
-    if (response.data && response.data.node_name) {
-      await checkEnroll(callback, enrollBody);
     }
   }
   this.detail().end();

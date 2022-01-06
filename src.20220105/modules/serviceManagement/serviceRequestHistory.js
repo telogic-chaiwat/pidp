@@ -158,7 +158,7 @@ module.exports.NAME = async function(req, res, next) {
       'customerReferenceId': getCustomerReferenceId(record.request_message,
           record.request_id),
       'confirmCode': '',
-      'RPLogoURL': 'https://dl.dropboxusercontent.com/s/6wio7kseqmhesm2/download.png?dl=0',
+      'RPLogoURL': '',
       'AAL': record.min_aal,
       'requestTime': getDateTime(record.creation_time),
       'expireTime': getDateTime(record.creation_time +
