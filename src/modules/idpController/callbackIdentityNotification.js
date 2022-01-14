@@ -91,7 +91,7 @@ module.exports.NAME = async function(req, res, next) {
           const objNodeName = JSON.parse(response.data.node_name);
           if (objNodeName && objNodeName.marketing_name_th) {
             // eslint-disable-next-line max-len
-            message = message.replace('[marketing_name_th]', objNodeName.marketing_name_th);
+            message = message.replaceAll('[marketing_name_th]', objNodeName.marketing_name_th);
           } else {
             this.debug('[callbackIdentityNotification] marketing_name_th is not found');
           }
