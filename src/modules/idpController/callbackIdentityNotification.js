@@ -85,13 +85,17 @@ module.exports.NAME = async function(req, res, next) {
       } else if (req.body.action == 'revoke_identity_association') {
         message = messageRevoke;
       }
+      // eslint-disable-next-line require-jsdoc
+      function replaceAll(string, search, replace) {
+        return string.split(search).join(replace);
+      }
 
       if (response.data && response.data.node_name) {
         try {
           const objNodeName = JSON.parse(response.data.node_name);
           if (objNodeName && objNodeName.marketing_name_th) {
             // eslint-disable-next-line max-len
-            message = message.replace('[marketing_name_th]', objNodeName.marketing_name_th);
+            message = replaceAll(message, '[marketing_name_th]', objNodeName.marketing_name_th);
           } else {
             this.debug('[callbackIdentityNotification] marketing_name_th is not found');
           }

@@ -89,11 +89,13 @@ exports.getCustomerReferenceId = function getCustomerReferenceId(requestMessage,
 };
 
 exports.getDateTime = (value) =>{
-  const dateFormat = require('dateformat');
+  // const dateFormat = require('dateformat');
+  const tz = require('moment');
   let result = '';
   if ( value && typeof value == 'number') {
     try {
-      result = dateFormat(value, 'yyyy-mm-dd HH:MM:ss');
+      // result = dateFormat(value, 'yyyy-mm-dd HH:MM:ss');
+      result = tz(value).tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss');
     } catch (err) {
       this.debug('error change format time');
     }
