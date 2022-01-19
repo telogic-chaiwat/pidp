@@ -179,7 +179,7 @@ module.exports.NAME = async function(req, res, next) {
       'request_id': identityRequest.request_id,
       'callbackHandleURL': 'serviceRequestRejectModule',
       'node_id': identityRequest.node_id,
-      'error_code': 30610,
+      'error_code': 30800,
       'urlCustom': 'serviceRequestRejectModule',
     };
     await sendErrorResponse.call(this, body);
