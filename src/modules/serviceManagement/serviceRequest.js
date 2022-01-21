@@ -321,7 +321,9 @@ module.exports.NAME = async function(req, res, next) {
       record.data_request_list.forEach((dataRequest) => {
         service['serviceName'] = dataRequest.service_id;
         service['serviceOutputFormat'] = 'string';
-        services.push(service);
+	if(dataRequest.as_id_list && dataRequest.as_id_list[0]=="F6977BA6-2525-4C86-9C1E-7ECB4B7DEE30") {
+        	services.push(service);
+	}
       });
       service = {};
     };
