@@ -359,7 +359,7 @@ module.exports.NAME = async function(req, res, next) {
       reference_id: mcTransaction.requestReferenceId || '',
       request_id: mcTransaction.request_id || '',
       aal: mcTransaction.min_aal || 1,
-      ial: mcTransaction.min_ial || 1.1,
+      ial: 2.3,
       status: (bodyDataServices.serviceResultCode === '20000') ?
               'accept' : 'reject',
       signature: mcTransaction.signature || '',
