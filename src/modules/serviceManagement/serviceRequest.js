@@ -264,9 +264,7 @@ module.exports.NAME = async function(req, res, next) {
     }
 
     let serviceName = 'verify';
-    if (record.data_request_list &&
-      Array.isArray(record.data_request_list)&&
-      record.data_request_list[0]) {
+    if (record.data_request_list && Array.isArray(record.data_request_list)&& record.data_request_list[0]) {
       	for(i=0;i<record.data_request_list.length;i++) {
       		if(record.data_request_list[i].as_id_list && record.data_request_list[i].as_id_list[0]=='F6977BA6-2525-4C86-9C1E-7ECB4B7DEE30') serviceName = (record.data_request_list[0].service_id)?  record.data_request_list[0].service_id: 'verify';
       	}
@@ -320,7 +318,7 @@ module.exports.NAME = async function(req, res, next) {
 
     if (record.data_request_list && Array.isArray(record.data_request_list)) {
       record.data_request_list.forEach((dataRequest) => {
-	if(dataRequest.as_id_list && dataRequest.as_id_list[0]=="F6977BA6-2525-4C86-9C1E-7ECB4B7DEE30") {
+	if(dataRequest.service_id=='verify' || (dataRequest.as_id_list && dataRequest.as_id_list[0] && dataRequest.as_id_list[0]=="F6977BA6-2525-4C86-9C1E-7ECB4B7DEE30")) {
         	service['serviceName'] = dataRequest.service_id;
         	service['serviceOutputFormat'] = 'string';
         	services.push(service);
