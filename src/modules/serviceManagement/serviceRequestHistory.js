@@ -73,6 +73,7 @@ module.exports.NAME = async function(req, res, next) {
       '$match': {
         'namespace': req.body.identityType,
         'identifier': req.body.identityValue,
+	'status' : {$ne : null},
       },
     },
     {
