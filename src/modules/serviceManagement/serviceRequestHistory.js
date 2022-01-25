@@ -131,7 +131,7 @@ module.exports.NAME = async function(req, res, next) {
         Array.isArray(mongoResponse[0].totalCount) &&
           mongoResponse[0].totalCount.length == 0 ) {
     this.stat(appName+' returned '+nodeCmd+' '+'error');
-    const resp = buildResponse(status.DATA_NOT_FOUND);
+    const resp = buildResponse(status.DATA_NOT_FOUND_200);
     res.status(resp.status).send(resp.body);
     return;
   }
