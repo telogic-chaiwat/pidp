@@ -403,7 +403,7 @@ function getCustomerReferenceId(requestMessage, requestId) {
   //               requestId.substring(requestId.length - 4);
   let result = requestId.substring(requestId.length - 8);
   // const regexPattern = /(REF\:)(\s*)(\d)/g;
-  const regexPattern = /(\bREF\:|\bRef\:|\bref\:)/g;
+  const regexPattern = /(\bTransaction Ref\:|\bRef\:|\bref\:)/g;
   if (requestMessage && requestMessage !== '' &&
         new RegExp(regexPattern, 'g').test(requestMessage)) {
     const patternWord = requestMessage.match(regexPattern);
@@ -432,6 +432,7 @@ function getReqInformation(reqMessage) {
   // if (!reqMsg) return null;
   // return reqMsg.replace(regexPattern, '');
   let requestMessage = reqMessage;
+	/*
   const regexPattern = /(\bREF\:|\bRef\:|\bref\:)/g;
   if (requestMessage && requestMessage !== '' &&
         new RegExp(regexPattern, 'g').test(requestMessage)) {
@@ -441,6 +442,7 @@ function getReqInformation(reqMessage) {
     // lastIndex decrement with 1 to remove "(" or just remove white space
     requestMessage = requestMessage.substring(0, lastIndex-1).trim();
   }
+	*/
   return requestMessage;
 }
 
