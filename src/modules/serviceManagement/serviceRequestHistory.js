@@ -25,6 +25,8 @@ module.exports.NAME = async function(req, res, next) {
       .modules('getCustomerReferenceId');
   const getDateTime = this.utils().services('basicFunction')
       .modules('getDateTime');
+  const enrollchecking = this.utils().submodules('checkEnroll')
+      .modules('checkEnroll');
 
   const appName = this.appName || 'pidp';
   // const serviceName = 'ndid';
@@ -55,6 +57,37 @@ module.exports.NAME = async function(req, res, next) {
   this.summary().addSuccessBlock('client', nodeCmd, null, 'success');
 
   const initInvoke = this.detail().InitInvoke || generateXTid(appName);
+
+  // 27-01-2022 NEW REQ
+  const responseEnroll = await enrollchecking( ()=>{
+
+  }, {
+    id_card: req.body.identityValue,
+  });
+  if (this.utils().http().isError(responseEnroll)) {
+    this.stat(appName+' returned '+nodeCmd+' '+'system error');
+    const resp = buildResponse(status.DB_ERROR);
+    res.status(resp.status).send(resp.body);
+    return;
+  }
+  if (responseEnroll.status != 200) {
+    this.stat(appName+' returned '+nodeCmd+' '+'system error');
+    const resp = buildResponse(status.SYSTEM_ERROR);
+    res.status(resp.status).send(resp.body);
+    return;
+  }
+  if (responseEnroll.data && responseEnroll.data.resultCode == '20020') {
+    this.stat(appName+' returned '+nodeCmd+' '+'success');
+    const resp = buildResponse(status.DATA_NOT_FOUND_200);
+    res.status(resp.status).send(resp.body);
+    return;
+  }
+
+  let onBoardTime = null;
+  if (responseEnroll.data && responseEnroll.data.resultData &&
+    Array.isArray(responseEnroll.data.resultData)) {
+    onBoardTime = responseEnroll.data.resultData[0].onboard_time;
+  }
   const limit = req.body.limit || 20;
   const skip = req.body.start || 0;
   const query = [
@@ -73,7 +106,10 @@ module.exports.NAME = async function(req, res, next) {
       '$match': {
         'namespace': req.body.identityType,
         'identifier': req.body.identityValue,
-	'status' : {$ne : null},
+        'status': {$ne: null},
+        'creation_time': {
+          '$gt': onBoardTime,
+        },
       },
     },
     {
