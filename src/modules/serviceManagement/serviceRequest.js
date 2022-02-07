@@ -333,6 +333,7 @@ module.exports.NAME = async function(req, res, next) {
     services = [];
     docs.push(doc);
     timeOutArray.push(record.request_timeout);
+    this.debug(`loop endpoint i=${i} length=${mongoResponse.length} .`);
   }
   // });
 
