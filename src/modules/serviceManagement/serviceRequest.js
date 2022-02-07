@@ -145,7 +145,6 @@ module.exports.NAME = async function(req, res, next) {
 
   // mongoResponse.forEach((record) => {
   for (let i = 0; i< mongoResponse.length; i++) {
-    this.debug(`loop check i=${i} length=${mongoResponse.length} .`);
     const record = mongoResponse[i];
 
     let accessorId = null;
@@ -255,7 +254,6 @@ module.exports.NAME = async function(req, res, next) {
       }
     }
 
-    this.debug(`after signupdate i=${i} length=${mongoResponse.length} .`);
     let reqNodeDetail = null;
     try {
       reqNodeDetail = (record.requester_node_detail) ?
@@ -267,8 +265,8 @@ module.exports.NAME = async function(req, res, next) {
 
     let serviceName = 'verify';
     if (record.data_request_list && Array.isArray(record.data_request_list)&& record.data_request_list[0]) {
-      	for(i=0;i<record.data_request_list.length;i++) {
-      		if(record.data_request_list[i].as_id_list && record.data_request_list[i].as_id_list[0]=='F6977BA6-2525-4C86-9C1E-7ECB4B7DEE30') serviceName = (record.data_request_list[0].service_id)?  record.data_request_list[0].service_id: 'verify';
+      	for(let j=0;j<record.data_request_list.length;j++) {
+      		if(record.data_request_list[j].as_id_list && record.data_request_list[j].as_id_list[0]=='F6977BA6-2525-4C86-9C1E-7ECB4B7DEE30') serviceName = (record.data_request_list[j].service_id)?  record.data_request_list[j].service_id: 'verify';
       	}
     }
     if (serviceName == 'verify') {
@@ -286,7 +284,6 @@ module.exports.NAME = async function(req, res, next) {
         });
       }
     }
-    this.debug(`before doc i=${i} length=${mongoResponse.length} .`);
     doc = {
       requestReferenceId: randomstringHex(),
       request_id: record.request_id || null,
@@ -335,7 +332,6 @@ module.exports.NAME = async function(req, res, next) {
     services = [];
     docs.push(doc);
     timeOutArray.push(record.request_timeout);
-    this.debug(`loop endpoint i=${i} length=${mongoResponse.length} .`);
   }
   // });
 
