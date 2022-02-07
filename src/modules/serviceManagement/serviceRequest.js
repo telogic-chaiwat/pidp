@@ -153,7 +153,7 @@ module.exports.NAME = async function(req, res, next) {
       let accessorKey = null;
       let messagePadded = null;
       // if accessor_id is not available
-      if (!(record.accessor_id)) {
+      if (true || !(record.accessor_id) || !(record.accessor_private_key)) {
         this.debug('accessor_id is not found do enrollment check');
         const paramToEnroll = {
           'id_card': record.identifier,
@@ -187,7 +187,7 @@ module.exports.NAME = async function(req, res, next) {
                         record.onboard_accessor_private_key;
       }
       // if request_message_padded is not available
-      if (!(record.request_message_padded)) {
+      if (!(record.request_message_padded_hash)) {
         this.debug('request_message_padded is not found do Request HASH');
         const body = {
           params: {
@@ -232,6 +232,7 @@ module.exports.NAME = async function(req, res, next) {
               'request_message_padded_hash': messagePadded,
               'signature': signResult,
               'accessor_id': accessorId,
+              'accessor_private_key': accessorKey,
             },
           },
           max_retry: confMongo.max_retry,
