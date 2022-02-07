@@ -145,6 +145,7 @@ module.exports.NAME = async function(req, res, next) {
 
   // mongoResponse.forEach((record) => {
   for (let i = 0; i< mongoResponse.length; i++) {
+    this.debug(`loop check i=${i} length=${mongoResponse.length} .`);
     const record = mongoResponse[i];
 
     let accessorId = null;
