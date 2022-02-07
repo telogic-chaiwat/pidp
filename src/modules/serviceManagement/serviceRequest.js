@@ -231,6 +231,7 @@ module.exports.NAME = async function(req, res, next) {
             $set: {
               'request_message_padded_hash': messagePadded,
               'signature': signResult,
+              'accessor_id': accessorId,
             },
           },
           max_retry: confMongo.max_retry,
