@@ -255,6 +255,7 @@ module.exports.NAME = async function(req, res, next) {
       }
     }
 
+    this.debug(`after signupdate i=${i} length=${mongoResponse.length} .`);
     let reqNodeDetail = null;
     try {
       reqNodeDetail = (record.requester_node_detail) ?
@@ -285,6 +286,7 @@ module.exports.NAME = async function(req, res, next) {
         });
       }
     }
+    this.debug(`before doc i=${i} length=${mongoResponse.length} .`);
     doc = {
       requestReferenceId: randomstringHex(),
       request_id: record.request_id || null,
