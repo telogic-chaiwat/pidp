@@ -86,7 +86,7 @@
     },
 
     "jwtSecretKey" : "k9OT6RO230Fu6qY6lpdipU0DO6awIex9",
-    "sms_content" : "คุณได้รับคำขอยืนยันตัวตน และขอความยินยอมในการใช้ข้อมูลของคุณในการยืนยันตัวตนกับ AIS/AWN กรุณาตรวจสอบให้แน่ชัดว่าเป็นการสมัครใช้บริการของคุณ ก่อน Log-in เข้า myAIS App เพื่อยืนยันตัวตนการเปิดบัญชี [marketing_name_th] https://m.ais.co.th/n1HD74WHq",
+    "sms_content" : "คุณได้รับคำขอยืนยันตัวตน และขอความยินยอมในการใช้ข้อมูลของคุณในการยืนยันตัวตนกับ AIS/AWN กรุณาตรวจสอบให้แน่ชัดว่าเป็นการสมัครใช้บริการของคุณ ก่อน Log-in เข้า myAIS App เพื่อยืนยันตัวตนการเปิดบัญชี [marketing_name_th] ภายใน 60 นาที https://m.ais.co.th/n1HD74WHq",
     "notification_create" : "คุณได้ลงทะเบียนบริการ NDID ที่ [marketing_name_th] หากไม่ได้ทำรายการกรุณาติดต่อ [marketing_name_th] Call Center",
     "notification_revoke" : "คุณยกเลิกลงทะเบียนบริการ NDID ที่ [marketing_name_th] หากไม่ได้ทำรายการกรุณาติดต่อ [marketing_name_th] Call Center"
 }

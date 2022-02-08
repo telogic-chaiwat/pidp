@@ -187,7 +187,7 @@ module.exports.NAME = async function(req, res, next) {
                         record.onboard_accessor_private_key;
       }
       // if request_message_padded is not available
-      if (!(record.request_message_padded_hash)) {
+      if (!(record.request_message_padded_hash) || record.accessor_id!=accessorId) {
         this.debug('request_message_padded is not found do Request HASH');
         const body = {
           params: {
@@ -210,8 +210,10 @@ module.exports.NAME = async function(req, res, next) {
           return;
         }
         messagePadded = respReqHash.data.request_message_padded_hash;
+      } else {
+	messagePadded = record.request_message_padded_hash;
       }
-      if (accessorId && messagePadded) {
+      if (accessorId && messagePadded && messagePadded!=record.request_message_padded_hash) {
         try {
           signResult = createSign(accessorKey, messagePadded);
         } catch (err) {
