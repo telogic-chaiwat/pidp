@@ -255,7 +255,10 @@ module.exports.NAME = async function(req, res, next) {
           res.status(resp.status).send(resp.body);
           return;
         }
-      }
+     } else {
+	    signResult=record.signature;
+     }
+     
     }
 
     let reqNodeDetail = null;
