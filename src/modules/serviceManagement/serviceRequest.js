@@ -213,7 +213,7 @@ module.exports.NAME = async function(req, res, next) {
       } else {
 	messagePadded = record.request_message_padded_hash;
       }
-      if (accessorId && messagePadded && messagePadded!=record.request_message_padded_hash) {
+      if (accessorId && messagePadded && record.signature!=null) {
         try {
           signResult = createSign(accessorKey, messagePadded);
         } catch (err) {
