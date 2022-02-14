@@ -77,8 +77,8 @@ module.exports.NAME = async function(req, res, next) {
 
   const initInvoke = this.detail().InitInvoke || '';
   this.debug('generate XTid ' + initInvoke);
-  let accessorId="",
-  let accessorKey="",
+  let accessorId="";
+  let accessorKey="";
   let revokeTime=0;
 
        const paramToEnroll = {
