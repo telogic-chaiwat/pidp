@@ -77,37 +77,16 @@ module.exports.NAME = async function(req, res, next) {
 
   const initInvoke = this.detail().InitInvoke || '';
   this.debug('generate XTid ' + initInvoke);
-  let accessorId="",
-  let accessorKey="",
-  let revokeTime=0;
 
-       const paramToEnroll = {
-          'id_card': bodydata.identityValue,
-        };
-        const respEnrollCheck = await enrollchecking(async ()=>{
-          return;
-        }, paramToEnroll);
-
-        if (this.utils().http().isError(respEnrollCheck)) {
-          this.stat(appName+' returned '+nodeCmd+' '+'system error');
-          const resp = buildResponse(status.DB_ERROR);
-          res.status(resp.status).send(resp.body);
-          return;
-        }
-        if (respEnrollCheck.status == 200 && respEnrollCheck.data &&
-          respEnrollCheck.data.resultCode == '20020') {
-          this.stat(appName+' returned '+nodeCmd+' '+' error');
-          const resp = buildResponse(status.DATA_NOT_FOUND_200);
-          res.status(resp.status).send(resp.body);
-          return;
-        }
-
-        if (respEnrollCheck.status == 200 && respEnrollCheck.data &&
-          respEnrollCheck.data.resultData) {
-          accessorId = respEnrollCheck.data.resultData[0].accessor_id;
-          accessorKey = respEnrollCheck.data.resultData[0].accessor_private_key;
-          revokeTime = respEnrollCheck.data.resultData[0].revoke_time;
-        }
+  /* const currentTime = new Date().getTime();
+  const calculateTimeOut = {
+    $add: ['$creation_time',
+      {
+        $subtract: [{$multiply: ['$request_timeout', 1000]}, 300*1000],
+      },
+    ],
+  };
+*/
   const query = {
     'namespace': bodydata.identityType,
     'identifier': bodydata.identityValue,
@@ -120,8 +99,11 @@ module.exports.NAME = async function(req, res, next) {
       $gte: 300,
     },
     'creation_time': {
-       '$gt': revokeTime,
+          '$gt': revokeTime,
     },
+    // '$expr': {
+    //  $lte: [currentTime, calculateTimeOut],
+    // },
   };
 
   let mongoOptAttribut = {
@@ -168,9 +150,45 @@ module.exports.NAME = async function(req, res, next) {
   for (let i = 0; i< mongoResponse.length; i++) {
     const record = mongoResponse[i];
 
+    let accessorId = null;
     let signResult = null;
     if (record.mode > 1) {
+      let accessorKey = null;
       let messagePadded = null;
+      // if accessor_id is not available
+      if (true || !(record.accessor_id) || !(record.accessor_private_key)) {
+        this.debug('accessor_id is not found do enrollment check');
+        const paramToEnroll = {
+          'id_card': record.identifier,
+        };
+        const respEnrollCheck = await enrollchecking(async ()=>{
+          return;
+        }, paramToEnroll);
+
+        if (this.utils().http().isError(respEnrollCheck)) {
+          this.stat(appName+' returned '+nodeCmd+' '+'system error');
+          const resp = buildResponse(status.DB_ERROR);
+          res.status(resp.status).send(resp.body);
+          return;
+        }
+        if (respEnrollCheck.status == 200 && respEnrollCheck.data &&
+          respEnrollCheck.data.resultCode == '20020') {
+          this.stat(appName+' returned '+nodeCmd+' '+' error');
+          const resp = buildResponse(status.DATA_NOT_FOUND_200);
+          res.status(resp.status).send(resp.body);
+          return;
+        }
+
+        if (respEnrollCheck.status == 200 && respEnrollCheck.data &&
+          respEnrollCheck.data.resultData) {
+          accessorId = respEnrollCheck.data.resultData[0].accessor_id;
+          accessorKey = respEnrollCheck.data.resultData[0].accessor_private_key;
+        }
+      } else {
+        accessorId = record.accessor_id;
+        accessorKey = record.accessor_private_key ||
+                        record.onboard_accessor_private_key;
+      }
       // if request_message_padded is not available
       if (!(record.request_message_padded_hash) || record.accessor_id!=accessorId) {
         this.debug('request_message_padded is not found do Request HASH');

@@ -25,6 +25,8 @@ module.exports.NAME = async function(req, res, next) {
   //    .modules('calculateTimeOut');
   const timeoutFilter = this.utils().submodules('timeoutFilter')
       .modules('timeoutFilter');
+  const enrollchecking = this.utils().submodules('checkEnroll')
+      .modules('checkEnroll');
 
   const appName = this.appName || 'pidp';
   // const serviceName = 'ndid';
@@ -56,6 +58,38 @@ module.exports.NAME = async function(req, res, next) {
 
   const initInvoke = this.detail().InitInvoke || generateXTid(appName);
   // const currentTime = new Date().getTime();
+
+  // 27-01-2022 NEW REQ
+  const responseEnroll = await enrollchecking( ()=>{
+
+  }, {
+    id_card: req.body.identityValue,
+  });
+  if (this.utils().http().isError(responseEnroll)) {
+    this.stat(appName+' returned '+nodeCmd+' '+'system error');
+    const resp = buildResponse(status.DB_ERROR);
+    res.status(resp.status).send(resp.body);
+    return;
+  }
+  if (responseEnroll.status != 200) {
+    this.stat(appName+' returned '+nodeCmd+' '+'system error');
+    const resp = buildResponse(status.SYSTEM_ERROR);
+    res.status(resp.status).send(resp.body);
+    return;
+  }
+  if (responseEnroll.data && responseEnroll.data.resultCode == '20020') {
+    this.stat(appName+' returned '+nodeCmd+' '+'success');
+    const resp = buildResponse(status.DATA_NOT_FOUND_200);
+    res.status(resp.status).send(resp.body);
+    return;
+  }
+
+  let revokeTime = null;
+  if (responseEnroll.data && responseEnroll.data.resultData &&
+    Array.isArray(responseEnroll.data.resultData)) {
+    revokeTime = responseEnroll.data.resultData[0].revoke_time;
+  }
+
   const query = [
     {
       '$match': {
@@ -74,6 +108,9 @@ module.exports.NAME = async function(req, res, next) {
         }],
         'request_timeout': {
           $gte: 300,
+        },
+        'creation_time': {
+          '$gt': revokeTime,
         },
         // '$expr': {
         //  $lte: [currentTime, calculateTimeOut],

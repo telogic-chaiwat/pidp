@@ -83,11 +83,18 @@ module.exports.NAME = async function(req, res, next) {
     return;
   }
 
-  let onBoardTime = null;
+  /* let onBoardTime = null;
   if (responseEnroll.data && responseEnroll.data.resultData &&
     Array.isArray(responseEnroll.data.resultData)) {
     onBoardTime = responseEnroll.data.resultData[0].onboard_time;
+  }*/
+
+  let revokeTime = null;
+  if (responseEnroll.data && responseEnroll.data.resultData &&
+    Array.isArray(responseEnroll.data.resultData)) {
+    revokeTime = responseEnroll.data.resultData[0].revoke_time;
   }
+
   const limit = req.body.limit || 20;
   const skip = req.body.start || 0;
   const query = [
@@ -108,7 +115,7 @@ module.exports.NAME = async function(req, res, next) {
         'identifier': req.body.identityValue,
         'status': {$ne: null},
         'creation_time': {
-          '$gt': onBoardTime,
+          '$gt': revokeTime,
         },
       },
     },
