@@ -55,7 +55,7 @@ const bodySchema = Joi.object({
       .required(),
 
   'requester': Joi
-      .string()
+      .string().valid("AIS","ACI")
       .required(),
 
   'services': Joi
