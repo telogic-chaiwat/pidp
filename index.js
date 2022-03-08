@@ -4,7 +4,8 @@
 
 // OR
 const whitelistIp = require('express-ip-access-control');
-//
+
+console.log("OK");
 
 const commonRodOpt = {
   mongo_create_connect: true,
