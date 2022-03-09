@@ -141,8 +141,7 @@ async function sendGetToken(service, result = null,
   try {
     const username = confGetToken?confGetToken.name:'';
     const pass = confGetToken?confGetToken.pass:'';
-    //const auth = 'Basic ' + Buffer.from(`${username}:${pass}`).toString('base64');
-    const auth = 'Bearer '+ 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiN2FiOTA5MWQyOTUzNDI4OThmOGIyOGI3NzY0ODk0YjEiLCJpYXQiOjE2NDY4MDE1OTF9.tLhM41DYfjOCHBIJzrv9-nXbBmB5w82x1c-lmCtaGlI';
+    const auth = 'Basic ' + Buffer.from(`${username}:${pass}`).toString('base64');
     Object.assign(headers, {
       authorization: auth,
     });
@@ -191,7 +190,7 @@ async function sendGetToken(service, result = null,
       return result;
     }
     if (optionAttribut != null) {
-      const newToken = tokens[service].token_type + ' ' + tokens[service].access_token;
+      const newToken = tokens[service].tokenType + ' ' + tokens[service].accessToken;
       if (optionAttribut.headers['Authorization']) {
         optionAttribut.headers['Authorization'] = newToken;
       } else {
