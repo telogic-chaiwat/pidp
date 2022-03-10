@@ -144,7 +144,8 @@ async function sendGetToken(service, result = null,
     let auth = 'Basic ' + Buffer.from(`${username}:${pass}`).toString('base64');
 
     if (service == 'myIDS') {
-      auth = 'Bearer ' + Buffer.from(`${username}:${pass}`).toString('base64');
+      //auth = 'Bearer ' + Buffer.from(`${username}:${pass}`).toString('base64');
+      auth = 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiN2FiOTA5MWQyOTUzNDI4OThmOGIyOGI3NzY0ODk0YjEiLCJpYXQiOjE2NDY4MDE1OTF9.tLhM41DYfjOCHBIJzrv9-nXbBmB5w82x1c-lmCtaGlI';
     }
 
     Object.assign(headers, {
