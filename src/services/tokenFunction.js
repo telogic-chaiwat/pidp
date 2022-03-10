@@ -141,7 +141,12 @@ async function sendGetToken(service, result = null,
   try {
     const username = confGetToken?confGetToken.name:'';
     const pass = confGetToken?confGetToken.pass:'';
-    const auth = 'Basic ' + Buffer.from(`${username}:${pass}`).toString('base64');
+    let auth = 'Basic ' + Buffer.from(`${username}:${pass}`).toString('base64');
+
+    if (service == 'myIDS') {
+      auth = 'Bearer ' + Buffer.from(`${username}:${pass}`).toString('base64');
+    }
+
     Object.assign(headers, {
       authorization: auth,
     });
@@ -159,6 +164,11 @@ async function sendGetToken(service, result = null,
     //   password: confGetToken?confGetToken.pass:'',
     // },
   };
+
+  if (service == 'myIDS') {
+    configGetToken.method ='GET';
+  }
+
   Object.assign(configGetToken,
       {httpsAgent: createHttpsAgent(service, nodeName)});
 
@@ -181,10 +191,22 @@ async function sendGetToken(service, result = null,
     this.summary().addSuccessBlock(service, nodeName,
         response.status, 'success');
 
-    if (response.data.resultData && Array.isArray(response.data.resultData)) {
-      Object.assign(tokens, {
-        [service]: response.data.resultData[0],
-      });
+    if (response.data.resultData) {
+      if (service == 'myIDS') {
+        const tokenRes = {
+          tokenType: response.data.resultData.token_type,
+          accessToken: response.data.resultData.refresh_token,
+          refreshToken: response.data.resultData.access_token,
+          expiresIn: response.data.expires_in,
+        };
+        Object.assign(tokens, {
+          [service]: tokenRes,
+        });
+      } else {
+        Object.assign(tokens, {
+          [service]: response.data.resultData[0],
+        });
+      }
     } else {
       this.debug('received error get token service : ' + service+ ', node: ' + nodeName);
       return result;

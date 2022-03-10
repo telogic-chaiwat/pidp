@@ -4,8 +4,7 @@
 
 // OR
 const whitelistIp = require('express-ip-access-control');
-
-console.log("OK");
+const helmet = require('helmet');
 
 const commonRodOpt = {
   mongo_create_connect: true,
@@ -49,19 +48,21 @@ const cb_BeforeRunServer = async function() {
       next();
     }, whitelistIp(options));
   }
-
-  return startServer;
-};
-
-const cb_afterRoute = async function() {
   this.app.use((req, res, next) => {
     res.append('Cache-Control', 'no-store');
     res.append('Content-Security-Policy', 'frame-ancestors \'none\'');
     res.append('X-Content-Type-Options', 'nosniff');
     res.append('X-Frame-Options', 'DENY');
+    console.log('masuk after');
     next();
   });
+  this.app.use(helmet());
 
+
+  return startServer;
+};
+
+const cb_afterRoute = async function() {
   // const {initGetToken} = require('./src/services/tokenFunction');
   // initGetToken.call(this, 'myIDS', 'get-token');
   // initGetToken.call(this, 'enroll', 'getToken');
