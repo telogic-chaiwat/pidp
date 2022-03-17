@@ -54,9 +54,7 @@ const bodySchema = Joi.object({
       .string()
       .required(),
 
-  'requester': Joi
-      .string()
-      .required(),
+  'requester': Joi.string().required().regex(RegExp(/^[A-Za-z1-9\s]*$/)),
 
   'services': Joi
       .array()
