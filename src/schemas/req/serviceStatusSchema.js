@@ -21,7 +21,7 @@ const bodySchema = Joi.object({
     not: Joi.exist(),
     then: Joi.required(),
   }),
-  'status': Joi.string().required(),
+  'status': Joi.string().required().valid('as_completed','as_prepare_data','as_fail_get_data','as_send_data','as_fail_send_data','as_fail_data_not_found'),
 });
 
 
